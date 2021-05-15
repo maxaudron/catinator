@@ -5,6 +5,8 @@ use anyhow::Result;
 
 use irc::client::prelude::*;
 
+use tracing::info;
+
 pub mod config;
 pub mod hooks;
 
@@ -28,11 +30,17 @@ impl Bot {
         use std::fs;
 
         let config_str = fs::read_to_string(config_path)?;
-        let config: config::Config = toml::from_str(&config_str)?;
+        let mut config: config::Config = toml::from_str(&config_str)?;
 
-        let irc_config: Config = config.clone().into();
+        match std::env::var("CATINATOR_PASSWORD") {
+            Ok(var) => {
+                info!("using password from env var");
+                config.user.password = var
+            }
+            Err(_) => ()
+        }
 
-        let irc_client = Client::from_config(irc_config.clone()).await?;
+        let irc_client = Client::from_config(config.clone().into()).await?;
 
         Ok(Bot { irc_client, config })
     }

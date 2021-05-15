@@ -22,5 +22,6 @@ FROM alpine:3.13
 COPY --from=cargo-build /work/target/release/catinator /usr/local/bin
 
 ENV CATINATOR_CONFIG="/config.toml"
+ENV CATINATOR_PASSWORD=""
 
 CMD ["/usr/local/bin/catinator"]

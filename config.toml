@@ -2,14 +2,14 @@
 nickname = "\\__{^-_-^}"
 username = "catinator"
 password = ""
-realname = "maow"
+realname = "moaw"
 
 [server]
 hostname = "irc.snoonet.org"
 port = 6697
 tls = true
 sasl = true
-channels = []
+channels = ["#audron-test"]
 
 [settings]
 prefix = ':'
