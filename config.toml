@@ -1,0 +1,15 @@
+[user]
+nickname = "\\__{^-_-^}"
+username = "catinator"
+password = ""
+realname = "maow"
+
+[server]
+hostname = "irc.snoonet.org"
+port = 6697
+tls = true
+sasl = true
+channels = []
+
+[settings]
+prefix = ':'
