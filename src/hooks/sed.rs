@@ -19,7 +19,7 @@ fn log_msg(msg: Message) -> Result<()> {
         LOG.with(|log_cell| {
             let mut log = log_cell.borrow_mut();
             if log.len() >= LOG_MAX_SIZE {
-                let _ = log.pop();
+                let _ = log.remove(0);
             }
             log.push((msg.source_nickname().unwrap().to_string(), text))
         });
@@ -71,12 +71,43 @@ mod tests {
                 "user".to_string(),
                 "this is a long message which will be replaced".to_string(),
             ));
-            for _ in 0..LOG_MAX_SIZE-1 {
+            for _ in 0..LOG_MAX_SIZE - 1 {
                 log.push((
                     "user".to_string(),
                     "this is a long message which doesn't matter".to_string(),
                 ))
             }
+        });
+    }
+
+    #[test]
+    fn test_log_push_max() {
+        LOG.with(|log_cell| {
+            let mut log = log_cell.borrow_mut();
+            log.push(("user".to_string(), "one".to_string()));
+            for _ in 0..LOG_MAX_SIZE - 2 {
+                log.push(("user".to_string(), "two".to_string()))
+            }
+            log.push(("user".to_string(), "three".to_string()));
+
+            assert_eq!(
+                log[LOG_MAX_SIZE - 1],
+                ("user".to_string(), "three".to_string())
+            );
+            assert_eq!(log[0], ("user".to_string(), "one".to_string()));
+        });
+
+        log_msg(Message::new(Some("user!user@user.com"), "PRIVMSG", vec!["user", "four"]).unwrap())
+            .unwrap();
+
+        LOG.with(|log_cell| {
+            let log = log_cell.borrow();
+
+            assert_eq!(
+                log[LOG_MAX_SIZE - 1],
+                ("user".to_string(), "four".to_string())
+            );
+            assert_eq!(log[0], ("user".to_string(), "two".to_string()));
         });
     }
 
