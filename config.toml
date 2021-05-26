@@ -9,7 +9,7 @@ hostname = "irc.snoonet.org"
 port = 6697
 tls = true
 sasl = true
-channels = ["#audron-test"]
+channels = ["#gnulag", "#audron-test"]
 
 [settings]
 prefix = ':'
