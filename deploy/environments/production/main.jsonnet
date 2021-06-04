@@ -1,0 +1,40 @@
+local k = import 'ksonnet-util/kausal.libsonnet';
+local util = import 'util/main.libsonnet';
+
+function(tag, namespace, envSlug=null, projectPathSlug=null)
+  (util.inlineSpec('https://control.kube.cat:6443', namespace, envSlug, projectPathSlug))
+  + {
+    _config:: self.data._config,
+    catinator:: self.data.catinator,
+    data: (import 'catinator.libsonnet') + {
+      _config+:: {
+        catinator+: {
+          image+: {
+            tag: tag,
+          },
+          config: importstr '../../../config.toml',
+        },
+      },
+      catinator+: {
+        local egress = util.cilium.egressNatPolicy,
+        local statefulset = k.apps.v1.statefulSet,
+        local container = k.core.v1.container,
+
+        statefulset+:
+          statefulset.spec.template.spec.withInitContainers([
+            container.new('waitForEgress', 'docker.io/busybox:latest')
+            + container.withCommand(['/bin/sleep', '30']),
+          ]),
+
+        egress:
+          egress.new('catinator')
+          + egress.withEgressSourceIP('178.63.224.13')
+          + egress.withDestinationCIDRs(['0.0.0.0/0'])
+          + egress.withPodSelector(
+            egress.podSelector.withMatchLabels({
+              'io.kubernetes.pod.namespace': namespace,
+            })
+          ),
+      },
+    },
+  }

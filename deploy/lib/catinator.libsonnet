@@ -4,7 +4,7 @@
       name: "catinator",
       image: {
         repo: "kube.cat/cocainefarm/catinator",
-        tag: "1.0.0"
+        tag: "1.0.1"
       },
       config: "",
       secret: "catinator-password"
@@ -22,7 +22,7 @@
     env.new(name=name, value=value)),
 
   catinator: {
-    deployment: statefulset.new(
+    statefulset: statefulset.new(
       name=$._config.catinator.name
       , replicas=1
       , containers=[
@@ -37,7 +37,7 @@
     )
     + k.util.configMapVolumeMount($.catinator.configmap, "/etc/catinator")
     + statefulset.spec.withServiceName($.catinator.service.metadata.name),
-    service: k.util.serviceFor(self.deployment) + service.spec.withClusterIP("None"),
+    service: k.util.serviceFor(self.statefulset) + service.spec.withClusterIP("None"),
     configmap: k.core.v1.configMap.new(name="%s-config" % $._config.catinator.name, data={
       "config.toml": $._config.catinator.config,
     })
