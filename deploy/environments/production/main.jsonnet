@@ -22,7 +22,7 @@ function(tag, namespace, envSlug=null, projectPathSlug=null)
 
         statefulset+:
           statefulset.spec.template.spec.withInitContainers([
-            container.new('waitForEgress', 'docker.io/busybox:latest')
+            container.new('wait-for-egress', 'docker.io/busybox:latest')
             + container.withCommand(['/bin/sleep', '30']),
           ]),
 
