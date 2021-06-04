@@ -4,7 +4,7 @@
     {
       "source": {
         "git": {
-          "remote": "https://github.com/grafana/jsonnet-libs.git",
+          "remote": "https://github.com/grafana/jsonnet-libs",
           "subdir": "ksonnet-util"
         }
       },
@@ -13,7 +13,7 @@
     {
       "source": {
         "git": {
-          "remote": "https://github.com/jsonnet-libs/k8s-alpha.git",
+          "remote": "https://github.com/jsonnet-libs/k8s-alpha",
           "subdir": "1.21"
         }
       },
@@ -22,7 +22,7 @@
     {
       "source": {
         "git": {
-          "remote": "https://gitlab.com/cocainefarm/k8s/lib/util.git",
+          "remote": "https://gitlab.com/cocainefarm/k8s/lib/util",
           "subdir": ""
         }
       },
