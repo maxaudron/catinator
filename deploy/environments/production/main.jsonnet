@@ -25,16 +25,6 @@ function(tag, namespace, envSlug=null, projectPathSlug=null)
             container.new('wait-for-egress', 'docker.io/busybox:latest')
             + container.withCommand(['/bin/sleep', '30']),
           ]),
-
-        egress:
-          egress.new('catinator')
-          + egress.withEgressSourceIP('178.63.224.13')
-          + egress.withDestinationCIDRs(['0.0.0.0/0'])
-          + egress.withPodSelector(
-            egress.podSelector.withMatchLabels({
-              'io.kubernetes.pod.namespace': namespace,
-            })
-          ),
       },
     },
   }
