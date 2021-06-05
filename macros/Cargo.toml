@@ -10,3 +10,12 @@ proc-macro = true
 syn = { version = "1", features = ["parsing"] }
 proc-macro2 = "1"
 quote = "1"
+
+[dev-dependencies]
+tokio = "*"
+futures = "*"
+irc = { version = "0.15", features = ["json", "tls-rust"], default_features = false }
+tracing = "*"
+anyhow = "*"
+regex = "*"
+catinator = { path = "../" }

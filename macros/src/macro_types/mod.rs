@@ -35,7 +35,6 @@ impl Parse for Items {
     }
 }
 
-#[derive(Debug)]
 pub enum Item {
     Command(Command),
     Hook(Hook),
@@ -61,7 +60,6 @@ impl Parse for Item {
     }
 }
 
-#[derive(Debug)]
 pub struct Command {
     pub name: LitStr,
     pub description: LitStr,
@@ -111,7 +109,6 @@ impl Parse for Command {
     }
 }
 
-#[derive(Debug)]
 pub struct Hook {
     pub name: LitStr,
     pub description: LitStr,
@@ -193,7 +190,6 @@ impl Parse for Hook {
     }
 }
 
-#[derive(Debug)]
 pub struct Matcher {
     pub name: LitStr,
     pub description: LitStr,

@@ -436,9 +436,16 @@ dependencies = [
 name = "macros"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
+ "catinator",
+ "futures",
+ "irc",
  "proc-macro2",
  "quote",
+ "regex",
  "syn",
+ "tokio",
+ "tracing",
 ]
 
 [[package]]

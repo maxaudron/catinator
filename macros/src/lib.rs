@@ -58,6 +58,69 @@ fn generate_help(items: &Items) -> proc_macro2::TokenStream {
     gen.into()
 }
 
+/// Main entrypoint to the bot
+///
+/// ```no_run
+/// # extern crate tokio;
+/// # use macros::catinator;
+/// # use anyhow::Result;
+/// #
+/// # fn function(bot: &catinator::Bot, msg: irc::client::prelude::Message) -> Result<()> {
+/// #   Ok(())
+/// # }
+/// #
+/// #[tokio::main]
+/// async fn main() {
+///   catinator!(
+///     hook("name", "A short description", PRIVMSG, function)
+///     command("name", "A short description", function)
+///     matcher("name", "A short description", r"^\[.*?\]$", function)
+///   );
+/// }
+/// ```
+///
+/// # Functions
+/// All the functions share a similar pattern,
+/// The first two arguments are the name and description respectively,
+/// the last argument is the function that gets executed.
+///
+/// The function must of of the following type:
+/// ```
+/// fn hook(bot: &catinator::Bot, msg: irc::client::prelude::Message) -> anyhow::Result<()> {
+///    Ok(())
+/// }
+/// ```
+///
+/// ## hook
+/// Hooks execute a function when a specific IRC Command is received,
+/// this allows for great flexibility in hooking into IRC for Authentication and the likes.
+///
+/// ```ignore
+/// hook("name", "description", COMMAND, function)
+/// ```
+///
+/// PRIVMSG is an IRC Command like PRIVMSG or AUTHENTICATE
+/// Any of the enum variants of [the irc crate](https://docs.rs/irc/0.15.0/irc/client/prelude/enum.Command.html)
+/// should work.
+///
+/// ## command
+/// A Command is command that can be executed in any PRIVMSG and is
+/// prefixed with the prefix configured in the config.toml file
+///
+/// ```ignore
+/// command("name", "description", function)
+/// ```
+/// Would be ":name <whatever>" in an irc channel or private message.
+///
+/// ## matcher
+/// A matcher matches on a PRIVMSG using regex.
+///
+/// ```ignore
+/// matcher("name", "description", r"regex", function)
+/// ```
+///
+/// The [regex crate](https://docs.rs/regex) is used for matching, see it's documentation for details.
+///
 #[proc_macro]
 pub fn catinator(tokens: TokenStream) -> TokenStream {
     let items = parse_macro_input!(tokens as Items);
@@ -156,6 +219,24 @@ pub fn catinator(tokens: TokenStream) -> TokenStream {
 
     return gen.into();
 }
+
+/// Match on a privmsg and execute the function block on it
+///
+/// # Examples
+/// ```
+/// # use anyhow::Result;
+/// # use irc::client::prelude::*;
+/// # use macros::privmsg;
+/// #
+/// # pub fn hook(bot: &catinator::Bot, msg: Message) -> Result<()> {
+/// privmsg!(msg, {
+///     bot.send_privmsg(
+///         msg.response_target().unwrap(),
+///         "bla",
+///     )?;
+/// })
+/// # }
+/// ```
 #[proc_macro]
 pub fn privmsg(tokens: TokenStream) -> TokenStream {
     use crate::macro_types::privmsg::Item;
