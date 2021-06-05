@@ -22,7 +22,7 @@
     {
       "source": {
         "git": {
-          "remote": "https://gitlab.com/cocainefarm/k8s/lib/util",
+          "remote": "https://gitlab.com/cocainefarm/k8s/lib/util.git",
           "subdir": ""
         }
       },
