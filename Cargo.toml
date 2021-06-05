@@ -27,5 +27,7 @@ tracing-futures = "0.2"
 regex = "1"
 sedregex = { git = "https://gitlab.com/audron/sedregex" }
 
+rand = "0.8.3"
+
 [workspace]
 members = ["macros"]

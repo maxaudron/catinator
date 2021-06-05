@@ -1,9 +1,12 @@
+extern crate rand;
+
 use anyhow::Result;
 use irc::client::prelude::*;
 
 pub mod sed;
 pub mod intensify;
 pub mod shifty_eyes;
+pub mod pet;
 
 pub use shifty_eyes::shifty_eyes;
 pub use intensify::intensify;

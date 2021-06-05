@@ -40,5 +40,10 @@ async fn main() {
             r"^\[.*?\]$",
             catinator::hooks::intensify
         ),
+        command(
+            "pet",
+            "Pet the cat, cats generally like pets.",
+            catinator::hooks::pet::pet
+        ),
     ];
 }
