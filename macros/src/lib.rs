@@ -156,3 +156,23 @@ pub fn catinator(tokens: TokenStream) -> TokenStream {
 
     return gen.into();
 }
+#[proc_macro]
+pub fn privmsg(tokens: TokenStream) -> TokenStream {
+    use crate::macro_types::privmsg::Item;
+    let item = parse_macro_input!(tokens as Item);
+
+    let msg = item.msg;
+    let func = item.func;
+
+    let gen = quote! {
+        match &#msg.command {
+            Command::PRIVMSG(target, text) => {
+                #func
+
+                Ok(())
+            }
+            _ => Ok(()),
+        }
+    };
+    return gen.into();
+}

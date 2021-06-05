@@ -8,12 +8,13 @@ use syn::{
 };
 use syn::{LitStr, Token};
 
+pub mod privmsg;
+
 pub trait IrcItem {
     fn to_call(&self) -> proc_macro2::TokenStream;
     fn help(&self) -> String;
 }
 
-#[derive(Debug)]
 pub struct Items {
     pub inner: Vec<Item>,
 }
@@ -75,7 +76,7 @@ impl IrcItem for Command {
         quote! {
             if #name == rest {
                 debug!(target: "command", "{} with {:?}", #name, message);
-                let result = #function(message.clone());
+                let result = #function(&bot, message.clone());
             }
         }
     }
