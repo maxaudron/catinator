@@ -2,10 +2,11 @@ use anyhow::Result;
 use irc::client::prelude::*;
 
 pub mod sed;
+pub mod intensify;
 pub mod shifty_eyes;
 
-pub use sed::*;
 pub use shifty_eyes::shifty_eyes;
+pub use intensify::intensify;
 
 pub fn sasl(bot: &crate::Bot, msg: Message) -> Result<()> {
     match msg.command {

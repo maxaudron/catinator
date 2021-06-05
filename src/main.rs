@@ -9,7 +9,7 @@ async fn main() {
         .with_thread_ids(true)
         .init();
 
-    catinator!(
+    catinator![
         hook(
             "sasl",
             "Handle Authentication.",
@@ -34,5 +34,11 @@ async fn main() {
             r"^s/",
             catinator::hooks::sed::replace
         ),
-    );
+        matcher(
+            "intensify",
+            "makes everything kinda more intense",
+            r"^\[.*?\]$",
+            catinator::hooks::intensify
+        ),
+    ];
 }
