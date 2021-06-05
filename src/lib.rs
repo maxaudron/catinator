@@ -75,4 +75,12 @@ impl Bot {
     ) -> std::result::Result<(), irc::error::Error> {
         self.irc_client.send_notice(target, message)
     }
+
+    pub fn send_action(
+        &self,
+        target: &str,
+        message: &str,
+    ) -> std::result::Result<(), irc::error::Error> {
+        self.irc_client.send_action(target, message)
+    }
 }

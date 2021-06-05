@@ -7,7 +7,7 @@ edition = "2018"
 [dependencies]
 macros = { path = "./macros" }
 
-irc = { version = "0.15", features = ["json", "tls-rust"], default_features = false }
+irc = { version = "0.15", features = ["json", "tls-rust", "ctcp"], default_features = false }
 irc-proto = "0.15"
 sasl = "0.5"
 base64 = "0.13"
