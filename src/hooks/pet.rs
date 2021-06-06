@@ -4,8 +4,8 @@ use anyhow::Result;
 use irc::client::prelude::*;
 use macros::privmsg;
 
-use rand::thread_rng;
 use rand::seq::SliceRandom;
+use rand::thread_rng;
 
 const PET_RESPONSE: [&str; 5] = [
     "purrs",
@@ -24,10 +24,10 @@ const PET_RESPONSE: [&str; 5] = [
 /// - [`Bot::send_action`]
 /// - RESPONSE
 pub fn pet(bot: &crate::Bot, msg: Message) -> Result<()> {
-    let mut rng = thread_rng();
-    let choice = PET_RESPONSE.choose(&mut rng);
-
     privmsg!(msg, {
-        bot.send_action(msg.response_target().unwrap(), choice.unwrap())?;
+        bot.send_action(
+            msg.response_target().unwrap(),
+            PET_RESPONSE.choose(&mut thread_rng()).unwrap(),
+        )?;
     })
 }
