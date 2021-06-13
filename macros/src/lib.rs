@@ -198,7 +198,10 @@ pub fn catinator(tokens: TokenStream) -> TokenStream {
 
             match &command {
                 Command::PRIVMSG(_target, text) => {
-                    let mut word = text.split_ascii_whitespace().next().unwrap().chars();
+                    let mut word = match text.split_ascii_whitespace().next() {
+                        Some(word) => word.chars(),
+                        None => continue,
+                    };
                     let prefix = word.next().unwrap();
                     let rest: String = word.collect();
 
