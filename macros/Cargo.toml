@@ -2,6 +2,12 @@
 name = "catinator_macros"
 version = "0.2.0"
 edition = "2018"
+description = "proc macros for catinator"
+license = "ISC"
+homepage = "https://gitlab.com/cocainefarm/gnulag/catinator"
+repository = "https://gitlab.com/cocainefarm/gnulag/catinator"
+documentation = "https://docs.rs/catinator_macros"
+
 
 [lib]
 proc-macro = true
@@ -12,10 +18,11 @@ proc-macro2 = "1"
 quote = "1"
 
 [dev-dependencies]
-tokio = "*"
-futures = "*"
+tokio = "1"
+futures = "0"
 irc = { version = "0.15", features = ["json", "tls-rust"], default_features = false }
-tracing = "*"
-anyhow = "*"
-regex = "*"
+tracing = "0"
+anyhow = "1"
+regex = "1"
 catinator = { path = "../" }
+
