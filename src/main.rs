@@ -9,6 +9,8 @@ async fn main() {
         .with_thread_ids(true)
         .init();
 
+    let mut sed = catinator::hooks::sed::Sed::new();
+
     catinator![
         hook(
             "sasl",
@@ -20,7 +22,7 @@ async fn main() {
             "sed_log",
             "Log messages for use with sed replace, max 10k lines.",
             PRIVMSG,
-            catinator::hooks::sed::log
+            sed.log
         ),
         matcher(
             "shifty_eyes",
@@ -32,7 +34,7 @@ async fn main() {
             "replace",
             "sed style replace with regex support. i/g/U/x sed flags available",
             r"^s/",
-            catinator::hooks::sed::replace
+            sed.replace
         ),
         matcher(
             "intensify",

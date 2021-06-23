@@ -1,11 +1,11 @@
 [package]
 name = "catinator"
-version = "1.2.1"
+version = "1.3.0"
 authors = ["Max Audron <audron@cocaine.farm>"]
 edition = "2018"
 
 [dependencies]
-macros = { package = "catinator_macros", version = "0.1", path = "./macros" }
+macros = { package = "catinator_macros", version = "0", path = "./macros" }
 
 irc = { version = "0.15", features = ["json", "tls-rust", "ctcp"], default_features = false }
 irc-proto = "0.15"

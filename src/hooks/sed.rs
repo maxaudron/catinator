@@ -1,62 +1,76 @@
-use anyhow::{anyhow, Result};
+use anyhow::{anyhow, Context, Result};
 use irc::client::prelude::*;
 
 use sedregex::ReplaceCommand;
 
-use std::cell::RefCell;
+use std::collections::HashMap;
 
 static LOG_MAX_SIZE: usize = 10000;
 
-thread_local!(static LOG: RefCell<Vec::<(String, String)>> = RefCell::new(Vec::with_capacity(LOG_MAX_SIZE)));
 thread_local!(static RE: regex::Regex = regex::Regex::new(r"^s/").unwrap());
 
-pub fn log(_bot: &crate::Bot, msg: Message) -> Result<()> {
-    log_msg(msg)
-}
+pub struct Sed(HashMap<String, Vec<(String, String)>>);
 
-fn log_msg(msg: Message) -> Result<()> {
-    if let Command::PRIVMSG(_, text) = msg.command.clone() {
-        LOG.with(|log_cell| {
-            let mut log = log_cell.borrow_mut();
-            if log.len() >= LOG_MAX_SIZE {
-                let _ = log.remove(0);
+impl Sed {
+    pub fn new() -> Sed {
+        Sed(HashMap::new())
+    }
+
+    pub fn log(&mut self, _bot: &crate::Bot, msg: Message) -> Result<()> {
+        self.log_msg(msg)
+    }
+
+    fn log_msg(&mut self, msg: Message) -> Result<()> {
+        if let Command::PRIVMSG(target, text) = msg.command.clone() {
+            match self.0.get_mut(&target) {
+                Some(log) => {
+                    if log.len() >= LOG_MAX_SIZE {
+                        let _ = log.remove(0);
+                    }
+                    log.push((msg.source_nickname().unwrap().to_string(), text))
+                }
+                None => {
+                    let mut log = Vec::with_capacity(LOG_MAX_SIZE);
+                    log.push((msg.source_nickname().unwrap().to_string(), text));
+                    self.0.insert(target, log);
+                }
             }
-            log.push((msg.source_nickname().unwrap().to_string(), text))
-        });
-    }
-    Ok(())
-}
-
-pub fn replace(bot: &crate::Bot, msg: Message) -> Result<()> {
-    match find_and_replace(&msg) {
-        Ok(res) => {
-            bot.send_privmsg(msg.response_target().unwrap(), res.as_str())
-                .unwrap();
-            Ok(())
         }
-        Err(_) => Ok(()),
+        Ok(())
     }
-}
 
-fn find_and_replace(msg: &Message) -> Result<String> {
-    if let Command::PRIVMSG(_, text) = msg.command.clone() {
-        let cmd = match ReplaceCommand::new(text.as_str()) {
-            Ok(cmd) => cmd,
-            Err(_) => return Err(anyhow!("building replace command failed")),
-        };
+    pub fn replace(&mut self, bot: &crate::Bot, msg: Message) -> Result<()> {
+        match self.find_and_replace(&msg) {
+            Ok(res) => {
+                bot.send_privmsg(msg.response_target().unwrap(), res.as_str())?;
+                Ok(())
+            }
+            Err(_) => Ok(()),
+        }
+    }
 
-        return LOG.with(|log_cell| {
-            log_cell
-                .borrow()
+    fn find_and_replace(&mut self, msg: &Message) -> Result<String> {
+        if let Command::PRIVMSG(target, text) = msg.command.clone() {
+            let cmd = match ReplaceCommand::new(text.as_str()) {
+                Ok(cmd) => cmd,
+                Err(_) => return Err(anyhow!("building replace command failed")),
+            };
+
+            let log = self
+                .0
+                .get(&target)
+                .context("did not find log for current channel")?;
+
+            return log
                 .iter()
                 .rev()
                 .find(|(_, text)| cmd.expr.is_match(text) && !RE.with(|re| re.is_match(text)))
                 .and_then(|(nick, text)| Some(format!("<{}> {}", nick, cmd.execute(text))))
-                .map_or(Err(anyhow!("replace failed")), |v| Ok(v))
-        });
-    }
+                .map_or(Err(anyhow!("replace failed")), |v| Ok(v));
+        }
 
-    Err(anyhow!("not a privmsg"))
+        Err(anyhow!("not a privmsg"))
+    }
 }
 
 #[cfg(test)]
@@ -64,93 +78,112 @@ mod tests {
     use super::*;
     use test::Bencher;
 
-    fn populate_log() {
-        LOG.with(|log_cell| {
-            let mut log = log_cell.borrow_mut();
-            log.push((
-                "user".to_string(),
-                "this is a long message which will be replaced".to_string(),
-            ));
-            for _ in 0..LOG_MAX_SIZE - 1 {
-                log.push((
-                    "user".to_string(),
-                    "this is a long message which doesn't matter".to_string(),
-                ))
-            }
-        });
+    fn populate_log() -> Sed {
+        let mut sed = Sed::new();
+
+        sed.log_msg(
+            Message::new(
+                Some("user!user@user.com"),
+                "PRIVMSG",
+                vec!["user", "this is a long message which will be replaced"],
+            )
+            .unwrap(),
+        )
+        .unwrap();
+
+        for _ in 0..LOG_MAX_SIZE - 1 {
+            sed.log_msg(
+                Message::new(
+                    Some("user!user@user.com"),
+                    "PRIVMSG",
+                    vec!["user", "this is a long message which doesn't matter"],
+                )
+                .unwrap(),
+            )
+            .unwrap();
+        }
+
+        return sed;
     }
 
     #[test]
     fn test_log_push_max() {
-        LOG.with(|log_cell| {
-            let mut log = log_cell.borrow_mut();
-            log.push(("user".to_string(), "one".to_string()));
-            for _ in 0..LOG_MAX_SIZE - 2 {
-                log.push(("user".to_string(), "two".to_string()))
-            }
-            log.push(("user".to_string(), "three".to_string()));
+        let mut sed = Sed::new();
 
+        sed.log_msg(
+            Message::new(Some("user!user@user.com"), "PRIVMSG", vec!["user", "one"]).unwrap(),
+        )
+        .unwrap();
+
+        for _ in 0..LOG_MAX_SIZE - 2 {
+            sed.log_msg(
+                Message::new(Some("user!user@user.com"), "PRIVMSG", vec!["user", "two"]).unwrap(),
+            )
+            .unwrap();
+        }
+        sed.log_msg(
+            Message::new(Some("user!user@user.com"), "PRIVMSG", vec!["user", "three"]).unwrap(),
+        )
+        .unwrap();
+
+        {
+            let log = sed.0.get("user").unwrap();
             assert_eq!(
                 log[LOG_MAX_SIZE - 1],
                 ("user".to_string(), "three".to_string())
             );
             assert_eq!(log[0], ("user".to_string(), "one".to_string()));
-        });
+        }
 
-        log_msg(Message::new(Some("user!user@user.com"), "PRIVMSG", vec!["user", "four"]).unwrap())
-            .unwrap();
+        sed.log_msg(
+            Message::new(Some("user!user@user.com"), "PRIVMSG", vec!["user", "four"]).unwrap(),
+        )
+        .unwrap();
 
-        LOG.with(|log_cell| {
-            let log = log_cell.borrow();
+        {
+            let log = sed.0.get("user").unwrap();
 
             assert_eq!(
                 log[LOG_MAX_SIZE - 1],
                 ("user".to_string(), "four".to_string())
             );
             assert_eq!(log[0], ("user".to_string(), "two".to_string()));
-        });
+        }
     }
 
     #[test]
     fn test_log_limit() {
-        populate_log();
+        let mut sed = populate_log();
 
-        LOG.with(|log_cell| {
-            let log = log_cell.borrow();
-            assert_eq!(log.len(), LOG_MAX_SIZE)
-        });
+        {
+            let log = sed.0.get("user").unwrap();
+            assert_eq!(log.len(), LOG_MAX_SIZE);
+        }
 
-        log_msg(Message {
-            tags: None,
-            prefix: Some(Prefix::Nickname(
-                "user".to_string(),
-                "username".to_string(),
-                "userhost".to_string(),
-            )),
-            command: Command::PRIVMSG(
-                "#channel".to_string(),
-                "this is the 10001th message".to_string(),
-            ),
-        })
+        sed.log_msg(
+            Message::new(
+                Some("user!user@user.com"),
+                "PRIVMSG",
+                vec!["user", "this is the 10001th message"],
+            )
+            .unwrap(),
+        )
         .unwrap();
 
-        LOG.with(|log_cell| {
-            let log = log_cell.borrow();
-            assert_eq!(log.len(), LOG_MAX_SIZE)
-        });
+        {
+            let log = sed.0.get("user").unwrap();
+            assert_eq!(log.len(), LOG_MAX_SIZE);
+        }
     }
 
     #[test]
     fn test_replace() {
-        populate_log();
+        let mut sed = populate_log();
         assert_eq!(
-            find_and_replace(&Message {
+            sed.find_and_replace(&Message {
                 tags: None,
                 prefix: None,
-                command: Command::PRIVMSG(
-                    "#channel".to_string(),
-                    "s/will be/has been/".to_string(),
-                ),
+                command: Command::PRIVMSG("user".to_string(), "s/will be/has been/".to_string(),),
             })
             .unwrap(),
             "<user> this is a long message which has been replaced"
@@ -159,15 +192,12 @@ mod tests {
 
     #[test]
     fn test_replace_complex() {
-        populate_log();
+        let mut sed = populate_log();
         assert_eq!(
-            find_and_replace(&Message {
+            sed.find_and_replace(&Message {
                 tags: None,
                 prefix: None,
-                command: Command::PRIVMSG(
-                    "#channel".to_string(),
-                    "s/(will).*(be)/$2 $1/".to_string(),
-                ),
+                command: Command::PRIVMSG("user".to_string(), "s/(will).*(be)/$2 $1/".to_string(),),
             })
             .unwrap(),
             "<user> this is a long message which be will replaced"
@@ -176,30 +206,24 @@ mod tests {
 
     #[bench]
     fn bench_replace(b: &mut Bencher) {
-        populate_log();
+        let mut sed = populate_log();
         b.iter(|| {
-            find_and_replace(&Message {
+            sed.find_and_replace(&Message {
                 tags: None,
                 prefix: None,
-                command: Command::PRIVMSG(
-                    "#channel".to_string(),
-                    "s/will be/has been/".to_string(),
-                ),
+                command: Command::PRIVMSG("user".to_string(), "s/will be/has been/".to_string()),
             })
         });
     }
 
     #[bench]
     fn bench_replace_complex(b: &mut Bencher) {
-        populate_log();
+        let mut sed = populate_log();
         b.iter(|| {
-            find_and_replace(&Message {
+            sed.find_and_replace(&Message {
                 tags: None,
                 prefix: None,
-                command: Command::PRIVMSG(
-                    "#channel".to_string(),
-                    "s/will be/has been/".to_string(),
-                ),
+                command: Command::PRIVMSG("user".to_string(), "s/(will).*(be)/$2 $1/".to_string()),
             })
         });
     }
