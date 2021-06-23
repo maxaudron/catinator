@@ -1,12 +1,12 @@
 use proc_macro2::{Ident, Span};
-use quote::quote;
+use quote::{quote, ToTokens};
 
 use syn::{
     parenthesized,
     parse::{Parse, ParseStream},
-    Path,
+    punctuated::Punctuated,
+    LitStr, Path, Token,
 };
-use syn::{LitStr, Token};
 
 pub mod privmsg;
 
@@ -63,7 +63,7 @@ impl Parse for Item {
 pub struct Command {
     pub name: LitStr,
     pub description: LitStr,
-    pub function: Path,
+    pub function: Function,
 }
 
 impl IrcItem for Command {
@@ -113,7 +113,7 @@ pub struct Hook {
     pub name: LitStr,
     pub description: LitStr,
     pub kind: Ident,
-    pub function: Path,
+    pub function: Function,
 }
 
 impl IrcItem for Hook {
@@ -194,7 +194,7 @@ pub struct Matcher {
     pub name: LitStr,
     pub description: LitStr,
     pub matcher: LitStr,
-    pub function: Path,
+    pub function: Function,
 }
 
 impl IrcItem for Matcher {
@@ -213,7 +213,12 @@ impl IrcItem for Matcher {
     }
 
     fn help(&self) -> String {
-        format!("  {} ({}):  {}", self.name.value(), self.matcher.value(), self.description.value())
+        format!(
+            "  {} ({}):  {}",
+            self.name.value(),
+            self.matcher.value(),
+            self.description.value()
+        )
     }
 }
 
@@ -242,5 +247,31 @@ impl Parse for Matcher {
             matcher,
             function,
         })
+    }
+}
+
+pub enum Function {
+    Path(Path),
+    Expr(Punctuated<Ident, Token![.]>),
+}
+
+impl ToTokens for Function {
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+        match self {
+            Function::Path(v) => *tokens = v.into_token_stream(),
+            Function::Expr(v) => *tokens = v.into_token_stream(),
+        }
+    }
+}
+
+impl Parse for Function {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        if input.peek2(Token![::]) {
+            Ok(Function::Path(input.parse()?))
+        } else if input.peek2(Token![.]) {
+            Ok(Function::Expr(input.parse_terminated(Ident::parse)?))
+        } else {
+            Err(input.error("did not find path or dotted"))
+        }
     }
 }
