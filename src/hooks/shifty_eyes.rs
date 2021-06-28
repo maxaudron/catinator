@@ -1,7 +1,7 @@
 use anyhow::{anyhow, Result};
 use irc::client::prelude::*;
 
-const EYES: [char; 10] = ['^', 'v', 'V', '>', '<', 'x', 'X', '-', 'o', 'O'];
+const EYES: [char; 11] = ['^', 'v', 'V', '>', '<', 'x', 'X', '-', 'o', 'O', '.'];
 const NOSE: [char; 7] = ['.', '_', '-', ';', '\'', '"', '~'];
 
 pub fn shifty_eyes(bot: &crate::Bot, msg: Message) -> Result<()> {
