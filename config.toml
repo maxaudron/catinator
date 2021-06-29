@@ -9,7 +9,7 @@ hostname = "irc.snoonet.org"
 port = 6697
 tls = true
 sasl = true
-channels = ["#linuxmasterrace", "#gnulag", "#audron-test"]
+channels = ["#redoxmasterrace", "#linuxmasterrace", "#gnulag", "#audron-test"]
 
 [settings]
 prefix = ':'
