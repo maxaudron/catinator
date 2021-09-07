@@ -24,7 +24,11 @@ impl Sed {
     }
 
     fn log_msg(&mut self, msg: Message) -> Result<()> {
-        if let Command::PRIVMSG(target, text) = msg.command.clone() {
+        if let Command::PRIVMSG(target, mut text) = msg.command.clone() {
+            if text.starts_with("\x01ACTION") {
+                text = text.replace("\x01ACTION", "\x01\x01");
+            }
+
             match self.0.get_mut(&target) {
                 Some(log) => {
                     if log.len() >= LOG_MAX_SIZE {
@@ -72,7 +76,17 @@ impl Sed {
                 .iter()
                 .rev()
                 .find(|(_, text)| cmd.expr.is_match(text) && !RE.with(|re| re.is_match(text)))
-                .and_then(|(nick, text)| Some(format!("<{}> {}", nick, cmd.execute(text))))
+                .and_then(|(nick, text)| {
+                    if text.starts_with("\x01\x01") {
+                        Some(format!(
+                            "* {}{}",
+                            nick,
+                            cmd.execute(text.replace("\x01", ""))
+                        ))
+                    } else {
+                        Some(format!("<{}> {}", nick, cmd.execute(text)))
+                    }
+                })
                 .map_or(Err(anyhow!("replace failed")), |v| Ok(v));
         }
 
