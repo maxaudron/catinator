@@ -16,8 +16,11 @@ impl Sed {
         Sed(HashMap::new())
     }
 
-    pub fn log(&mut self, _bot: &crate::Bot, msg: Message) -> Result<()> {
-        self.log_msg(msg)
+    pub fn log(&mut self, _bot: &crate::Bot, msg: Message) {
+        match self.log_msg(msg) {
+            Ok(_) => (),
+            Err(err) => tracing::error!("failed to log new message: {:?}", err),
+        }
     }
 
     fn log_msg(&mut self, msg: Message) -> Result<()> {
@@ -39,13 +42,17 @@ impl Sed {
         Ok(())
     }
 
-    pub fn replace(&mut self, bot: &crate::Bot, msg: Message) -> Result<()> {
+    pub fn replace(&mut self, bot: &crate::Bot, msg: Message) {
         match self.find_and_replace(&msg) {
-            Ok(res) => {
-                bot.send_privmsg(msg.response_target().unwrap(), res.as_str())?;
-                Ok(())
-            }
-            Err(_) => Ok(()),
+            Ok(res) => match bot.send_privmsg(msg.response_target().unwrap(), res.as_str()) {
+                Ok(_) => (),
+                Err(_) => tracing::error!(
+                    "failed to send message: \"{:?}\" to channel: {:?}",
+                    msg.response_target().unwrap(),
+                    res
+                ),
+            },
+            Err(_) => tracing::debug!("did not find match for: {:?}", msg),
         }
     }
 
