@@ -83,9 +83,8 @@ impl Sed {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use test::Bencher;
 
-    fn populate_log() -> Sed {
+    pub fn populate_log() -> Sed {
         let mut sed = Sed::new();
 
         sed.log_msg(
@@ -210,10 +209,16 @@ mod tests {
             "<user> this is a long message which be will replaced"
         )
     }
+}
+
+#[cfg(all(test, feature = "bench"))]
+mod bench {
+    use super::*;
+    use test::Bencher;
 
     #[bench]
     fn bench_replace(b: &mut Bencher) {
-        let mut sed = populate_log();
+        let mut sed = tests::populate_log();
         b.iter(|| {
             sed.find_and_replace(&Message {
                 tags: None,
@@ -225,7 +230,7 @@ mod tests {
 
     #[bench]
     fn bench_replace_complex(b: &mut Bencher) {
-        let mut sed = populate_log();
+        let mut sed = tests::populate_log();
         b.iter(|| {
             sed.find_and_replace(&Message {
                 tags: None,

@@ -1,4 +1,5 @@
-#![feature(test)]
+#![cfg_attr(all(test, feature = "bench"), feature(test))]
+#[cfg(all(test, feature = "bench"))]
 extern crate test;
 
 use anyhow::Result;
@@ -19,7 +20,6 @@ macro_rules! reply {
     };
 }
 
-
 pub struct Bot {
     pub config: config::Config,
     pub irc_client: irc::client::Client,
@@ -37,7 +37,7 @@ impl Bot {
                 info!("using password from env var");
                 config.user.password = var
             }
-            Err(_) => ()
+            Err(_) => (),
         }
 
         let irc_client = Client::from_config(config.clone().into()).await?;
