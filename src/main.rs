@@ -47,5 +47,10 @@ async fn main() {
             "Pet the cat, cats generally like pets.",
             catinator::hooks::pet::pet
         ),
+        command(
+            "about",
+            "Prints some info about this kitty cat",
+            catinator::hooks::about
+        ),
     ];
 }

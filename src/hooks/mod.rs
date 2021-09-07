@@ -3,13 +3,25 @@ extern crate rand;
 use anyhow::Result;
 use irc::client::prelude::*;
 
-pub mod sed;
 pub mod intensify;
-pub mod shifty_eyes;
 pub mod pet;
+pub mod sed;
+pub mod shifty_eyes;
 
-pub use shifty_eyes::shifty_eyes;
 pub use intensify::intensify;
+pub use shifty_eyes::shifty_eyes;
+
+pub fn about(bot: &crate::Bot, msg: Message) {
+    bot.send_privmsg(
+        msg.response_target().unwrap(),
+        &format!(
+            "{name} is {name} - https://gitlab.com/cocainefarm/gnulag/catinator",
+            name = bot.config.user.nickname
+        )
+        .to_string(),
+    )
+    .unwrap();
+}
 
 pub fn sasl(bot: &crate::Bot, msg: Message) -> Result<()> {
     match msg.command {
