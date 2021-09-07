@@ -2,26 +2,30 @@
 # Cargo Build Stage
 # ------------------------------------------------------------------------------
 
-FROM docker.io/rust:1.52-alpine as cargo-build
-
-RUN rustup default nightly && rustup update
-
+FROM docker.io/lukemathwalker/cargo-chef:latest-rust-1.54.0-alpine AS chef
 WORKDIR /work
 
+FROM chef AS planner
 COPY . .
+RUN cargo chef prepare --recipe-path recipe.json
 
-RUN apk add --no-cache musl-dev
+FROM chef AS builder
+COPY --from=planner /work/recipe.json recipe.json
+
+RUN cargo chef cook --release --recipe-path recipe.json
+
+COPY . .
 RUN cargo build --release
 
 # ------------------------------------------------------------------------------
 # Final Stage
 # ------------------------------------------------------------------------------
 
-FROM alpine:3.13
+FROM scratch
 
-COPY --from=cargo-build /work/target/release/catinator /usr/local/bin
+COPY --from=builder /work/target/release/catinator /usr/local/bin
 
 ENV CATINATOR_CONFIG="/config.toml"
 ENV CATINATOR_PASSWORD=""
 
-CMD ["/usr/local/bin/catinator"]
+ENTRYPOINT ["/usr/local/bin/catinator"]
