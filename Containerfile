@@ -20,8 +20,7 @@ RUN cargo build --release
 # ------------------------------------------------------------------------------
 # Final Stage
 # ------------------------------------------------------------------------------
-
-FROM scratch
+FROM docker.io/alpine:3.14 as alpine
 
 COPY --from=builder /work/target/release/catinator /usr/local/bin
 
