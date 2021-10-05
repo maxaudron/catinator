@@ -24,6 +24,12 @@ async fn main() {
             PRIVMSG,
             sed.log
         ),
+        hook(
+            "url_preview",
+            "Send preview of website",
+            PRIVMSG,
+            catinator::hooks::url::url_preview
+        )
         matcher(
             "shifty_eyes",
             ">.>",
