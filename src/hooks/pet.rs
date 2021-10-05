@@ -9,7 +9,7 @@ use rand::thread_rng;
 
 const PET_RESPONSE: [&str; 5] = [
     "purrs",
-    "moews loudly",
+    "meows loudly",
     "walks away",
     "snuggles back",
     "strikes you with it's sharp claws",
