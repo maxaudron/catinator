@@ -29,6 +29,13 @@ sedregex = { version = "0.2", git = "https://gitlab.com/audron/sedregex" }
 
 rand = "0.8.3"
 
+reqwest = { version = "0.11", default-features = false, features = ["rustls-tls", "gzip"] }
+kuchiki = "0.8"
+
+[dev-dependencies]
+tokio-test = "0.4"
+mockito = "0.30"
+
 [features]
 default = []
 
