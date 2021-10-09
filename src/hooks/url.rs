@@ -89,17 +89,30 @@ mod tests {
     use super::url_parser;
     use super::url_title;
     use anyhow::{Error, Result};
+    use mockito;
 
     #[test]
     fn test_url_titel() {
-        let title: String =
-            tokio_test::block_on(url_title("https://news.ycombinator.com")).unwrap();
-        assert_eq!(title.as_str(), "Hacker News");
+        assert!(tokio_test::block_on(url_title(&mockito::server_url())).is_err());
 
-        let title: String = tokio_test::block_on(url_title("https://google.com")).unwrap();
-        assert_eq!(title.as_str(), "Google");
+        let _m = mockito::mock("GET", "/")
+            .with_body(
+                r#"
+<html>
+  <head>
+    <title>This is test site</title>
+  </head>
+  <body>
+    <h1>some heading</h1>
+  </body>
+</html>
+"#,
+            )
+            .create();
+        mockito::start();
 
-        assert!(tokio_test::block_on(url_title("random_site")).is_err())
+        let title: String = tokio_test::block_on(url_title(&mockito::server_url())).unwrap();
+        assert_eq!(title.as_str(), "This is test site");
     }
     #[test]
     fn test_url_parser() {
@@ -130,21 +143,49 @@ mod tests {
     }
 
     #[test]
+    /**
+    Integration test ish. this tries to replicate url_preview, to make sure
+    everything works together.
+    */
     fn test_all() {
+        let _urls = [
+            mockito::mock("GET", "/1")
+                .with_body(
+                    r#"
+<html>
+  <head>
+    <title>test site 1</title>
+  </head>
+</html>
+"#,
+                )
+                .create(),
+            mockito::mock("GET", "/2")
+                .with_body(
+                    r#"
+<html>
+  <head>
+    <title>test site 2</title>
+  </head>
+"#,
+                )
+                .create(),
+        ];
+
         let mut titles: Vec<String> = Vec::new();
-        let text = "https://news.ycombinator.com www.google.com https://youtube.com";
+        let text = format!(
+            "some text {u}/1 other text {u}/2",
+            u = &mockito::server_url()
+        );
         let urls = url_parser(&text);
 
-        assert_eq!(urls.len(), 3);
+        assert_eq!(urls.len(), 2);
 
         for url in &urls {
             if let Ok(title) = tokio_test::block_on(url_title(&url.as_str())) {
                 titles.push(title);
             }
         }
-        assert_eq!(
-            msg_builder(&titles),
-            "Titles: Hacker News --- Google --- YouTube"
-        );
+        assert_eq!(msg_builder(&titles), "Titles: test site 1 --- test site 2");
     }
 }
