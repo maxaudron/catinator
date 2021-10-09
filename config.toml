@@ -1,6 +1,6 @@
 [user]
-nickname = "\\__{^-_-^}"
-username = "catinator"
+nickname = "r0flcat"
+username = "r0fltest"
 password = ""
 realname = "moaw"
 
@@ -9,7 +9,7 @@ hostname = "irc.snoonet.org"
 port = 6697
 tls = true
 sasl = true
-channels = ["#redoxmasterrace", "#linuxmasterrace", "#gnulag"]
+channels = ["#linuxmasterrace"]
 
 [settings]
-prefix = ':'
+prefix = '_'
