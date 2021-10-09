@@ -24,7 +24,7 @@ impl Parse for Items {
         let mut items: Vec<Item> = Vec::new();
 
         while !input.is_empty() {
-            if input.peek(syn::Ident) && input.peek2(syn::token::Paren) {
+            if input.peek(syn::Ident) && input.peek2(syn::token::Paren) || input.peek(Token![async]) {
                 items.push(input.parse()?)
             } else {
                 return Err(input.error("line was not of expected format"));
@@ -43,12 +43,28 @@ pub enum Item {
 
 impl Parse for Item {
     fn parse(input: ParseStream) -> syn::Result<Self> {
+        let mut asyn = false;
+        if input.peek(Token![async]) {
+            asyn = true;
+            let _: Token![async] = input.parse()?;
+        }
+
         if input.peek(syn::Ident) {
+            // parses the identifier to determine the type
             let item: Ident = input.parse()?;
             match item.to_string().as_str() {
-                "command" => input.parse().map(Item::Command),
-                "hook" => input.parse().map(Item::Hook),
-                "matcher" => input.parse().map(Item::Matcher),
+                "command" => input.parse().map(|mut i: Command| {
+                    i.asyn = asyn;
+                    Item::Command(i)
+                }),
+                "hook" => input.parse().map(|mut i: Hook| {
+                    i.asyn = asyn;
+                    Item::Hook(i)
+                }),
+                "matcher" => input.parse().map(|mut i: Matcher| {
+                    i.asyn = asyn;
+                    Item::Matcher(i)
+                }),
                 _ => Err(input.error(format!(
                     "expected one of: command, hook or matcher not {}",
                     item.to_string()
@@ -61,6 +77,7 @@ impl Parse for Item {
 }
 
 pub struct Command {
+    pub asyn: bool,
     pub name: LitStr,
     pub description: LitStr,
     pub function: Function,
@@ -71,10 +88,24 @@ impl IrcItem for Command {
         let name = &self.name;
         let function = &self.function;
 
+        let call = if self.asyn {
+            quote! {
+                #function(&bot, message.clone()).await
+            }
+        } else {
+            quote! {
+                #function(&bot, message.clone())
+            }
+        };
+
         quote! {
             if #name == rest {
                 debug!(target: "command", "{} with {:?}", #name, message);
-                let result = #function(&bot, message.clone());
+                let result = #call;
+
+                if let Err(err) = result {
+                    tracing::error!("error in matcher: {:?}: {:?}", #name, err)
+                }
             }
         }
     }
@@ -102,6 +133,7 @@ impl Parse for Command {
         let function = content.parse()?;
 
         Ok(Self {
+            asyn: false,
             name,
             description,
             function,
@@ -110,6 +142,7 @@ impl Parse for Command {
 }
 
 pub struct Hook {
+    pub asyn: bool,
     pub name: LitStr,
     pub description: LitStr,
     pub kind: Ident,
@@ -123,10 +156,24 @@ impl IrcItem for Hook {
         let kind_str = &self.kind.to_string();
         let function = &self.function;
 
+        let call = if self.asyn {
+            quote! {
+                #function(&bot, message.clone()).await
+            }
+        } else {
+            quote! {
+                #function(&bot, message.clone())
+            }
+        };
+
         quote! {
             if let Command::#kind(..) = &command {
                 debug!(target: "hook", "{} of kind {} with {:?}", #name, #kind_str, message);
-                let result = #function(&bot, message.clone());
+                let result = #call;
+
+                if let Err(err) = result {
+                    tracing::error!("error in matcher: {:?}: {:?}", #name, err)
+                }
             }
         }
     }
@@ -182,6 +229,7 @@ impl Parse for Hook {
         let function = content.parse()?;
 
         Ok(Self {
+            asyn: false,
             name,
             description,
             kind,
@@ -191,6 +239,7 @@ impl Parse for Hook {
 }
 
 pub struct Matcher {
+    pub asyn: bool,
     pub name: LitStr,
     pub description: LitStr,
     pub matcher: LitStr,
@@ -204,10 +253,24 @@ impl IrcItem for Matcher {
 
         let ident = Ident::new(&name.value(), Span::call_site());
 
+        let call = if self.asyn {
+            quote! {
+                #function(&bot, message.clone()).await
+            }
+        } else {
+            quote! {
+                #function(&bot, message.clone())
+            }
+        };
+
         quote! {
             if #ident.is_match(text) {
                 debug!(target: "matcher", "{} with {:?}", #name, message);
-                let result = #function(&bot, message.clone());
+                let result = #call;
+
+                if let Err(err) = result {
+                    tracing::error!("error in matcher: {:?}: {:?}", #name, err)
+                }
             }
         }
     }
@@ -242,6 +305,7 @@ impl Parse for Matcher {
         let function = content.parse()?;
 
         Ok(Self {
+            asyn: false,
             name,
             description,
             matcher,
