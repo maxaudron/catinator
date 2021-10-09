@@ -88,6 +88,7 @@ mod tests {
     use super::msg_builder;
     use super::url_parser;
     use super::url_title;
+    use anyhow::{Error, Result};
 
     #[test]
     fn test_url_titel() {
@@ -98,8 +99,7 @@ mod tests {
         let title: String = tokio_test::block_on(url_title("https://google.com")).unwrap();
         assert_eq!(title.as_str(), "Google");
 
-        let title: Option<String> = tokio_test::block_on(url_title("random_site"));
-        assert_eq!(title, None)
+        assert!(tokio_test::block_on(url_title("random_site")).is_err())
     }
     #[test]
     fn test_url_parser() {
@@ -138,7 +138,7 @@ mod tests {
         assert_eq!(urls.len(), 3);
 
         for url in &urls {
-            if let Some(title) = tokio_test::block_on(url_title(&url.as_str())) {
+            if let Ok(title) = tokio_test::block_on(url_title(&url.as_str())) {
                 titles.push(title);
             }
         }
