@@ -2,12 +2,7 @@
 async fn main() {
     use catinator::catinator;
 
-    tracing_subscriber::fmt()
-        .compact()
-        .with_span_events(tracing_subscriber::fmt::format::FmtSpan::FULL)
-        .with_max_level(tracing::Level::DEBUG)
-        .with_thread_ids(true)
-        .init();
+    tracing_subscriber::fmt::init();
 
     let mut sed = catinator::hooks::sed::Sed::new();
 
