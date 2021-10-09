@@ -14,7 +14,7 @@ pub fn url_parser(msg: &str) -> Vec<String> {
 
     url_regex
         .find_iter(msg)
-        .map(|u| u.as_str().to_string().replace("www.", "https://www."))
+        .map(|u| u.as_str().to_string().replace("www.", "https://"))
         .collect::<Vec<String>>()
 }
 
