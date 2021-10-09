@@ -29,8 +29,8 @@ sedregex = { version = "0.2", git = "https://gitlab.com/audron/sedregex" }
 
 rand = "0.8.3"
 
-html_parser = "0.6.2"
 reqwest = { version = "0.11", features = ["json"] }
+kuchiki = "0.8.1"
 
 [dev-dependencies]
 tokio-test = "*"

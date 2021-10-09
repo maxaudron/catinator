@@ -1,11 +1,10 @@
 use anyhow::Result;
 use irc::client::prelude::*;
-use macros::privmsg;
-use std::option::Option;
-use std::str::FromStr;
-use std::string::String;
 
 use regex::Regex;
+
+extern crate kuchiki;
+use kuchiki::traits::*;
 
 pub const URL_REGEX: &str = r#"(https?://|www.)\S+"#;
 
@@ -19,18 +18,19 @@ pub fn url_parser(msg: &str) -> Vec<String> {
 }
 
 pub async fn url_title(url: &str) -> Option<String> {
-    let body = reqwest::get(url).await.unwrap().text().await.unwrap();
+    let body = reqwest::get(url).await.ok()?.text().await.ok()?;
 
-    let parsed_body = html_parser::Dom::parse(&body).unwrap().to_json();
-
-
-    return Some("Hacker News".to_string());
+    let document = kuchiki::parse_html().one(body);
+    match document.select("title") {
+        Ok(title) => Some(title.into_iter().nth(0)?.text_contents()),
+        Err(_) => None,
+    }
 }
 
 pub fn url_preview(bot: &crate::Bot, msg: Message) -> Result<()> {
     if let Command::PRIVMSG(target, text) = msg.command.clone() {
         for url in url_parser(&text) {
-            if let Some(title) = futures::executor::block_on(url_title(&url.as_str())){
+            if let Some(title) = futures::executor::block_on(url_title(&url.as_str())) {
                 bot.send_privmsg(&target, title.as_str())?;
             }
         }
@@ -45,10 +45,18 @@ mod tests {
 
     #[test]
     fn test_url_titel() {
-        let title = tokio_test::block_on(
-            url_title("https://news.ycombinator.com/")
-        );
-        assert_eq!(title.unwrap().as_str(), "Hackerr News");
+        let title: String =
+            tokio_test::block_on(url_title("https://news.ycombinator.com")).unwrap();
+        assert_eq!(title.as_str(), "Hacker News");
+
+        let title: String =
+            tokio_test::block_on(url_title("https://google.com")).unwrap();
+        assert_eq!(title.as_str(), "Google");
+
+        let title: Option<String> =
+            tokio_test::block_on(url_title("random_site"));
+        assert_eq!(title, None)
+
     }
     #[test]
     fn test_url_parser() {
