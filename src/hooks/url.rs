@@ -41,17 +41,17 @@ pub async fn url_title(url: &str) -> Result<String, Error> {
 }
 
 #[tracing::instrument(skip(bot))]
-pub fn url_preview(bot: &crate::Bot, msg: Message) -> Result<()> {
+pub async fn url_preview(bot: &crate::Bot, msg: Message) -> Result<()> {
     if let Command::PRIVMSG(target, text) = msg.command.clone() {
         let mut titles: Vec<String> = Vec::new();
 
         for url in url_parser(&text) {
             trace!("got url: {:?}", url);
-            match futures::executor::block_on(url_title(&url.as_str())) {
+            match url_title(&url.as_str()).await {
                 Ok(title) => {
                     trace!("extracted title from url: {:?}, {:?}", title, url);
                     titles.push(title);
-                },
+                }
                 Err(err) => error!("Failed to get urls title: {:?}", err),
             }
         }
@@ -69,7 +69,7 @@ pub fn msg_builder(titles: &Vec<String>) -> String {
         "Title{}: {}",
         if titles.len() > 1 { "s" } else { "" },
         titles.join(" --- ")
-        )
+    )
 }
 
 #[cfg(test)]

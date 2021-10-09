@@ -13,7 +13,7 @@ async fn main() {
             AUTHENTICATE,
             catinator::hooks::sasl
         ),
-        hook(
+        async hook(
             "url_preview",
             "Send preview of website",
             PRIVMSG,
