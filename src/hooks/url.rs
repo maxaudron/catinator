@@ -6,7 +6,7 @@ use regex::Regex;
 extern crate kuchiki;
 use kuchiki::{parse_html, traits::*};
 use reqwest::{get, Url};
-use tracing::{error, trace};
+use tracing::trace;
 
 pub const URL_REGEX: &str = r#"(https?://|www.)\S+"#;
 
@@ -43,18 +43,28 @@ pub async fn url_title(url: &str) -> Result<String, Error> {
 #[tracing::instrument(skip(bot))]
 pub async fn url_preview(bot: &crate::Bot, msg: Message) -> Result<()> {
     if let Command::PRIVMSG(target, text) = msg.command.clone() {
-        let mut titles: Vec<String> = Vec::new();
+        let mut futures: Vec<tokio::task::JoinHandle<_>> = Vec::new();
 
         for url in url_parser(&text) {
-            trace!("got url: {:?}", url);
-            match url_title(&url.as_str()).await {
-                Ok(title) => {
-                    trace!("extracted title from url: {:?}, {:?}", title, url);
-                    titles.push(title);
+            futures.push(tokio::spawn(async move {
+                trace!("got url: {:?}", url);
+                match url_title(&url.as_str()).await {
+                    Ok(title) => {
+                        trace!("extracted title from url: {:?}, {:?}", title, url);
+                        Ok(title)
+                    }
+                    Err(err) => bail!("Failed to get urls title: {:?}", err),
                 }
-                Err(err) => error!("Failed to get urls title: {:?}", err),
-            }
+            }))
         }
+
+        let titles = futures::future::join_all(futures).await;
+
+        let titles: Vec<String> = titles
+            .into_iter()
+            .filter_map(|x| x.ok())
+            .filter_map(|x| x.ok())
+            .collect();
 
         if !titles.is_empty() {
             bot.send_privmsg(&target, &msg_builder(&titles))?;
