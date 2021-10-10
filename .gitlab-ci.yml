@@ -1,6 +1,8 @@
 include:
   - project: "cocainefarm/templates/ci"
     file: "/rust.base.yaml"
+    rules:
+      - if: $CI_COMMIT_TAG == null
   - project: "cocainefarm/templates/ci"
     file: "/tanka.base.yaml"
     rules:
