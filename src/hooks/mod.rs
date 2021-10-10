@@ -11,7 +11,7 @@ pub mod shifty_eyes;
 pub use intensify::intensify;
 pub use shifty_eyes::shifty_eyes;
 
-pub fn about(bot: &crate::Bot, msg: Message) {
+pub fn about(bot: &crate::Bot, msg: Message) -> Result<()> {
     bot.send_privmsg(
         msg.response_target().unwrap(),
         &format!(
@@ -21,6 +21,8 @@ pub fn about(bot: &crate::Bot, msg: Message) {
         .to_string(),
     )
     .unwrap();
+
+    Ok(())
 }
 
 pub fn sasl(bot: &crate::Bot, msg: Message) -> Result<()> {
@@ -35,7 +37,7 @@ pub fn sasl(bot: &crate::Bot, msg: Message) -> Result<()> {
                     .with_username(bot.config.clone().user.username)
                     .with_password(bot.config.clone().user.password);
 
-                let mut mechanism = Plain::from_credentials(creds).unwrap();
+                let mut mechanism = Plain::from_credentials(creds)?;
 
                 let initial_data = mechanism.initial();
 

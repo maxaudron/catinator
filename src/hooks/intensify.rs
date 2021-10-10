@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{Result, Context};
 use irc::client::prelude::*;
 use macros::privmsg;
 
@@ -10,7 +10,7 @@ pub fn intensify(bot: &crate::Bot, msg: Message) -> Result<()> {
         let content = chars.as_str();
 
         bot.send_privmsg(
-            msg.response_target().unwrap(),
+            msg.response_target().context("failed to get response target")?,
             format!("\x02\x0304[\x1d{} INTENSIFIES\x1d]\x03\x0F", content.to_uppercase()).as_str(),
         )?;
     })
