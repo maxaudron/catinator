@@ -1,3 +1,4 @@
+---
 include:
   - project: "cocainefarm/templates/ci"
     file: "/rust.yaml"
@@ -7,18 +8,6 @@ include:
     file: "/tanka.base.yaml"
     rules:
       - if: $CI_COMMIT_TAG
-
-test:
-  before_script:
-    - apk add openssl-dev
-
-coverage:
-  before_script:
-    - apk add openssl-dev
-
-build:
-  before_script:
-    - apk add openssl-dev
 
 workflow:
   rules:

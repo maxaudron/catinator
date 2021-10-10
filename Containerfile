@@ -3,7 +3,6 @@
 # ------------------------------------------------------------------------------
 
 FROM kube.cat/cocainefarm/rust:1.55.0 AS chef
-RUN apk add openssl-dev
 WORKDIR /work
 
 FROM chef AS planner
