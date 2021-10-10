@@ -8,6 +8,18 @@ include:
     rules:
       - if: $CI_COMMIT_TAG
 
+test:
+  before_script:
+    - apk add openssl-dev
+
+coverage:
+  before_script:
+    - apk add openssl-dev
+
+build:
+  before_script:
+    - apk add openssl-dev
+
 workflow:
   rules:
     - if: $CI_MERGE_REQUEST_IID

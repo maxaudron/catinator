@@ -2,7 +2,8 @@
 # Cargo Build Stage
 # ------------------------------------------------------------------------------
 
-FROM docker.io/lukemathwalker/cargo-chef:latest-rust-1.54.0-alpine AS chef
+FROM kube.cat/cocainefarm/rust:1.55.0 AS chef
+RUN apk add openssl-dev
 WORKDIR /work
 
 FROM chef AS planner
