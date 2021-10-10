@@ -1,11 +1,12 @@
-use anyhow::{bail, Context, Error, Result};
+use crate::util::web::shorten_url;
+use anyhow::{Context, Error, Result};
+use futures::try_join;
 use reqwest::{get, Url};
 use serde::{Deserialize, Serialize};
 use serde_json::Result as SerdeJsonResult;
-use tracing::trace;
 
 #[derive(Serialize, Deserialize, Debug)]
-struct WaResult {
+struct WaResponse {
     queryresult: QueryResult,
 }
 
@@ -18,41 +19,28 @@ struct QueryResult {
 struct Pod {
     title: String,
     id: String,
+    primary: Option<bool>,
     subpods: Vec<SubPod>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 struct SubPod {
-    title: String,
     plaintext: String,
 }
 
-fn parse_json(str_data: &str) -> SerdeJsonResult<WaResult> {
-    let w: WaResult = serde_json::from_str(str_data)?;
+fn parse_json(str_data: &str) -> SerdeJsonResult<WaResponse> {
+    let w: WaResponse = serde_json::from_str(str_data)?;
     Ok(w)
 }
 
-#[tracing::instrument]
-async fn wa_query(query_str: &str) -> Result<String, Error> {
-    let app_id = "XXX"; // TODO: Get from env
-    let api_url = format!(
-        "http://api.wolframalpha.com/v2/query?input={}&appid={}&output=json",
-        query_str, app_id
-    );
-
-    let body = get(Url::parse(&api_url).context("Failed to parse url")?)
-        .await
-        .context("Failed to make request")?
-        .text()
-        .await
-        .context("failed to get request response text")?;
-
-    let full_wa_res = parse_json(&body)?;
-    trace!("got full_wa_res: {:?}", full_wa_res);
-
-    let pod_plaintexts = full_wa_res.queryresult.pods
+/// Reduces all 'pod' plaintexts to a single string.
+/// Same as gonzobot does it.
+fn to_single_string(wa_res: WaResponse) -> String {
+    wa_res
+        .queryresult
+        .pods
         .iter()
-        .filter(|it| it.id.to_lowercase() != "input")
+        .filter(|it| it.id.to_lowercase() != "input" && it.primary.is_some())
         .map(|pod| {
             let subpod_texts = pod
                 .subpods
@@ -64,9 +52,55 @@ async fn wa_query(query_str: &str) -> Result<String, Error> {
             format!("{}: {}", &pod.title, subpod_texts)
         })
         .collect::<Vec<String>>()
-        .join(" - ");
+        .join(" - ")
+}
 
-    Ok(pod_plaintexts)
+fn get_url(query_str: &str, base_url: Option<&str>) -> String {
+    let app_id = "XXX"; // TODO: Get from env
+    let wa_url = "http://api.wolframalpha.com";
+    let api_url = format!(
+        "{}/v2/query?input={}&appid={}&output=json",
+        base_url.unwrap_or(wa_url),
+        query_str,
+        app_id
+    );
+    api_url
+}
+
+async fn send_wa_req(url: &str) -> Result<String, Error> {
+    let body = get(Url::parse(url).context("Failed to parse url")?)
+        .await
+        .context("Failed to make request")?
+        .text()
+        .await
+        .context("failed to get request response text")?;
+    Ok(body)
+}
+
+async fn handle_wa_req(url: &str) -> Result<WaResponse, Error> {
+    let res_body = send_wa_req(url).await?;
+    let parsed = parse_json(&res_body)?;
+    Ok(parsed)
+}
+
+/// Sends a request to the Wolfram Alpha API, returns a plain text response.
+#[tracing::instrument]
+async fn wa_query(query_str: &str, base_url: Option<&str>) -> Result<String, Error> {
+    let user_url = format!("http://www.wolframalpha.com/input/?i={}", query_str);
+    let user_url_shortened_fut = shorten_url(&user_url);
+
+    let url = get_url(query_str, base_url);
+    let wa_res_fut = handle_wa_req(&url);
+
+    // Can't just (foo.await, bar.await), smh
+    // https://rust-lang.github.io/async-book/06_multiple_futures/02_join.html
+    let (wa_res, user_url_shortened) = try_join!(wa_res_fut, user_url_shortened_fut)?;
+
+    Ok(format!(
+        "{} - {}",
+        &user_url_shortened,
+        to_single_string(wa_res)
+    ))
 }
 
 #[cfg(test)]
@@ -74,11 +108,20 @@ mod tests {
 
     use super::wa_query;
     use anyhow::{Error, Result};
+    use mockito::{self, Matcher};
 
     #[tokio::test]
-    // async fn test_query_result_json_parsing() -> Result<(), Error> {
-    async fn test_query_result_json_parsing() {
-        let res = wa_query("weather graz").await.unwrap();
-        assert_eq!(res, "asdf");
+    async fn test_query_result_json_parsing() -> Result<(), Error> {
+        let body = include_str!("../../tests/resources/wolfram_alpha_api_response.json");
+        let _m = mockito::mock("GET", Matcher::Any)
+            // Trimmed down version of a full WA response:
+            .with_body(body)
+            .create();
+        mockito::start();
+
+        let res = wa_query("5/10", Some(&mockito::server_url())).await?;
+        let res_without_link = res.splitn(2, "-").collect::<Vec<&str>>()[1].trim();
+        assert_eq!(res_without_link, "Exact result: 1/2 - Decimal form: 0.5");
+        Ok(())
     }
 }

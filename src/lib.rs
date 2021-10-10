@@ -10,6 +10,7 @@ use tracing::info;
 
 pub mod config;
 pub mod hooks;
+pub mod util;
 
 pub use macros::catinator;
 
