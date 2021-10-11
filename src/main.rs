@@ -52,5 +52,10 @@ async fn main() {
             "Prints some info about this kitty cat",
             catinator::hooks::about
         ),
+        async command(
+            "wa",
+            "Returns Wolfram Alpha results for a query",
+            catinator::hooks::wa::wa
+        ),
     ];
 }

@@ -1,9 +1,11 @@
 use crate::util::web::shorten_url;
 use anyhow::{Context, Error, Result};
 use futures::try_join;
+use irc::client::prelude::*;
 use reqwest::{get, Url};
 use serde::{Deserialize, Serialize};
 use serde_json::Result as SerdeJsonResult;
+use macros::privmsg;
 
 #[derive(Serialize, Deserialize, Debug)]
 struct WaResponse {
@@ -101,6 +103,20 @@ async fn wa_query(query_str: &str, base_url: Option<&str>) -> Result<String, Err
         &user_url_shortened,
         to_single_string(wa_res)
     ))
+}
+
+pub async fn wa(bot: &crate::Bot, msg: Message) -> Result<()> {
+    privmsg!(msg, {
+        let mut chars = text.chars();
+        chars.next();
+        chars.next_back();
+        let content = chars.as_str();
+
+        bot.send_privmsg(
+            msg.response_target().context("failed to get response target")?,
+            &wa_query(content, None).await?
+        )?;
+    })
 }
 
 #[cfg(test)]
