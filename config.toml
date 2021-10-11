@@ -13,3 +13,4 @@ channels = ["#redoxmasterrace", "#linuxmasterrace", "#gnulag"]
 
 [settings]
 prefix = ':'
+wa_api_key = ""

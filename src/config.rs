@@ -43,4 +43,5 @@ pub struct Server {
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default, Deserialize)]
 pub struct Settings {
     pub prefix: char,
+    pub wa_api_key: String,
 }

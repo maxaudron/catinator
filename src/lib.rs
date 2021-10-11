@@ -26,6 +26,16 @@ pub struct Bot {
     pub irc_client: irc::client::Client,
 }
 
+fn get_env_var(var_name: &str) -> Option<String> {
+    match std::env::var(var_name) {
+        Ok(var) => {
+            info!("using {} from env", var_name);
+            Some(var)
+        }
+        Err(_) => None,
+    }
+}
+
 impl Bot {
     pub async fn new(config_path: &str) -> Result<Bot> {
         use std::fs;
@@ -33,10 +43,18 @@ impl Bot {
         let config_str = fs::read_to_string(config_path)?;
         let mut config: config::Config = toml::from_str(&config_str)?;
 
-        match std::env::var("CATINATOR_PASSWORD") {
+        if let Some(v) = get_env_var("CATINATOR_PASSWORD") {
+            config.user.password = v
+        };
+
+        if let Some(v) = get_env_var("CATINATOR_WA_API_KEY") {
+            config.settings.wa_api_key = v
+        };
+
+        match std::env::var("CATINATOR_WA_API_KEY") {
             Ok(var) => {
-                info!("using password from env var");
-                config.user.password = var
+                info!("using wa api key from env var");
+                config.settings.wa_api_key = var
             }
             Err(_) => (),
         }

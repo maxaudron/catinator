@@ -26,5 +26,6 @@ COPY --from=builder /work/target/release/catinator /usr/local/bin
 
 ENV CATINATOR_CONFIG="/config.toml"
 ENV CATINATOR_PASSWORD=""
+ENV CATINATOR_WA_API_KEY=""
 
 ENTRYPOINT ["/usr/local/bin/catinator"]
