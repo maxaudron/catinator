@@ -5,7 +5,6 @@ use irc::client::prelude::*;
 use macros::privmsg;
 use reqwest::{get, Url};
 use serde::{Deserialize, Serialize};
-use serde_json::Result as SerdeJsonResult;
 
 #[derive(Serialize, Deserialize, Debug)]
 struct WaResponse {
@@ -28,11 +27,6 @@ struct Pod {
 #[derive(Serialize, Deserialize, Debug)]
 struct SubPod {
     plaintext: String,
-}
-
-fn parse_json(str_data: &str) -> SerdeJsonResult<WaResponse> {
-    let w: WaResponse = serde_json::from_str(str_data)?;
-    Ok(w)
 }
 
 /// Reduces all 'pod' plaintexts to a single string.
@@ -80,7 +74,7 @@ async fn send_wa_req(url: &str) -> Result<String, Error> {
 
 async fn handle_wa_req(url: &str) -> Result<WaResponse, Error> {
     let res_body = send_wa_req(url).await?;
-    let parsed = parse_json(&res_body)?;
+    let parsed = serde_json::from_str(&res_body)?;
     Ok(parsed)
 }
 
