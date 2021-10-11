@@ -110,15 +110,10 @@ async fn wa_query(
 
 pub async fn wa(bot: &crate::Bot, msg: Message) -> Result<()> {
     privmsg!(msg, {
-        let mut chars = text.chars();
-        chars.next();
-        chars.next_back();
-        let content = chars.as_str();
-
+        let content = text.chars().as_str().splitn(2, " ").collect::<Vec<&str>>()[1];
         if content.is_empty() {
             bail!("Empty input for WA query");
         }
-
         bot.send_privmsg(
             msg.response_target()
                 .context("failed to get response target")?,
