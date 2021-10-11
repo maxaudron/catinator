@@ -7,7 +7,7 @@ pub mod intensify;
 pub mod pet;
 pub mod sed;
 pub mod shifty_eyes;
-pub mod wa;
+pub mod wolfram_alpha;
 
 pub use intensify::intensify;
 pub use shifty_eyes::shifty_eyes;

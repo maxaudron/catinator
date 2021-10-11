@@ -55,7 +55,7 @@ async fn main() {
         async command(
             "wa",
             "Returns Wolfram Alpha results for a query",
-            catinator::hooks::wa::wa
+            catinator::hooks::wolfram_alpha::wa
         ),
     ];
 }
