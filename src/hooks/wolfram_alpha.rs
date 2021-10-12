@@ -1,4 +1,4 @@
-use crate::util::web::shorten_url;
+use crate::util::{formatting::truncate, web::shorten_url};
 use anyhow::{bail, Context, Error, Result};
 use futures::try_join;
 use irc::client::prelude::*;
@@ -97,8 +97,8 @@ async fn wa_query(
 
     Ok(format!(
         "{} - {}",
+        truncate(&to_single_string(wa_res), 250), // Same length as in gonzobot
         &user_url_shortened,
-        to_single_string(wa_res)
     ))
 }
 
@@ -134,8 +134,11 @@ mod tests {
         mockito::start();
 
         let res = wa_query("5/10", None, Some(&mockito::server_url())).await?;
-        let res_without_link = res.splitn(2, "-").collect::<Vec<&str>>()[1].trim();
-        assert_eq!(res_without_link, "Exact result: 1/2 - Decimal form: 0.5");
+        let res_without_link = res.rsplitn(2, "-").collect::<Vec<&str>>()[1..].join(" ");
+        assert_eq!(
+            res_without_link.trim(),
+            "Exact result: 1/2 - Decimal form: 0.5"
+        );
         Ok(())
     }
 }
