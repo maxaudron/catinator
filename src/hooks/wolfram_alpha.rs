@@ -32,6 +32,16 @@ struct SubPod {
     plaintext: String,
 }
 
+fn clean_result_text(text: &str) -> String {
+    text
+        // Remove newlines
+        .replace("\n", "; ")
+        // Remove multiple whitespace
+        .split_whitespace()
+        .collect::<Vec<&str>>()
+        .join(" ")
+}
+
 /// Reduces all 'pod' plaintexts to a single string.
 /// Same as gonzobot does it.
 fn to_single_string(wa_res: WaResponse) -> String {
@@ -44,7 +54,7 @@ fn to_single_string(wa_res: WaResponse) -> String {
             let subpod_texts = pod
                 .subpods
                 .iter()
-                .map(|subpod| subpod.plaintext.clone())
+                .map(|subpod| clean_result_text(&subpod.plaintext))
                 .collect::<Vec<String>>()
                 .join(", ");
 
@@ -143,6 +153,8 @@ pub async fn wa(bot: &crate::Bot, msg: Message) -> Result<()> {
 #[cfg(test)]
 mod tests {
 
+    use crate::hooks::wolfram_alpha::clean_result_text;
+
     use super::{get_input_query, get_wa_user_short_url, wa_query};
     use anyhow::{Error, Result};
     use mockito::{self, Matcher};
@@ -219,6 +231,14 @@ mod tests {
         let input = "test";
         assert_eq!(get_wa_user_short_url(input).await?, "https://is.gd/NzIyUZ");
         Ok(())
+    }
+
+    #[test]
+    fn test_clean_result_text() {
+        assert_eq!(
+            clean_result_text("Newlines\nand  multiple\n\n whitespace   is removed."),
+            "Newlines; and multiple; ; whitespace is removed.",
+        )
     }
 
     #[tokio::test]
