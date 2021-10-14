@@ -1,0 +1,244 @@
+{
+  "queryresult": {
+    "success": true,
+    "error": false,
+    "numpods": 7,
+    "datatypes": "Math",
+    "timedout": "",
+    "timedoutpods": "",
+    "timing": 0.921,
+    "parsetiming": 0.17500000000000002,
+    "parsetimedout": false,
+    "recalculate": "",
+    "id": "MSP485014edhg0e7d9e6fi500002a5e4i117igf338i",
+    "host": "https://www4c.wolframalpha.com",
+    "server": "5",
+    "related": "https://www4c.wolframalpha.com/api/v1/relatedQueries.jsp?id=MSPa485114edhg0e7d9e6fi500005h567id42e4fib623794414399634972455",
+    "version": "2.6",
+    "inputstring": "5 / 10",
+    "pods": [
+      {
+        "title": "Input",
+        "scanner": "Identity",
+        "id": "Input",
+        "position": 100,
+        "error": false,
+        "numsubpods": 1,
+        "subpods": [
+          {
+            "title": "",
+            "img": {
+              "src": "https://www4c.wolframalpha.com/Calculate/MSP/MSP485214edhg0e7d9e6fi500003b0hcbg1cbai5gi4?MSPStoreType=image/gif&s=5",
+              "alt": "5/10",
+              "title": "5/10",
+              "width": 21,
+              "height": 37,
+              "type": "Default",
+              "themes": "1,2,3,4,5,6,7,8,9,10,11,12",
+              "colorinvertable": true
+            },
+            "plaintext": "5/10"
+          }
+        ],
+        "expressiontypes": {
+          "name": "Default"
+        }
+      },
+      {
+        "title": "Exact result",
+        "scanner": "Rational",
+        "id": "Result",
+        "position": 200,
+        "error": false,
+        "numsubpods": 1,
+        "primary": true,
+        "subpods": [
+          {
+            "title": "",
+            "img": {
+              "src": "https://www4c.wolframalpha.com/Calculate/MSP/MSP485314edhg0e7d9e6fi5000041ee77342b27hf65?MSPStoreType=image/gif&s=5",
+              "alt": "1/2",
+              "title": "1/2",
+              "width": 13,
+              "height": 37,
+              "type": "Default",
+              "themes": "1,2,3,4,5,6,7,8,9,10,11,12",
+              "colorinvertable": true
+            },
+            "plaintext": "1/2"
+          }
+        ],
+        "expressiontypes": {
+          "name": "Default"
+        },
+        "states": [
+          {
+            "name": "Step-by-step solution",
+            "input": "Result__Step-by-step solution",
+            "stepbystep": true
+          }
+        ]
+      },
+      {
+        "title": "Decimal form",
+        "scanner": "Numeric",
+        "id": "DecimalApproximation",
+        "position": 300,
+        "error": false,
+        "numsubpods": 1,
+        "primary": true,
+        "subpods": [
+          {
+            "title": "",
+            "img": {
+              "src": "https://www4c.wolframalpha.com/Calculate/MSP/MSP485414edhg0e7d9e6fi50000379ibc1hdfcc9c3f?MSPStoreType=image/gif&s=5",
+              "alt": "0.5",
+              "title": "0.5",
+              "width": 30,
+              "height": 21,
+              "type": "Default",
+              "themes": "1,2,3,4,5,6,7,8,9,10,11,12",
+              "colorinvertable": true
+            },
+            "plaintext": "0.5"
+          }
+        ],
+        "expressiontypes": {
+          "name": "Default"
+        }
+      },
+      {
+        "title": "Number line",
+        "scanner": "NumberLine",
+        "id": "NumberLine",
+        "position": 400,
+        "error": false,
+        "numsubpods": 1,
+        "subpods": [
+          {
+            "title": "",
+            "img": {
+              "src": "https://www4c.wolframalpha.com/Calculate/MSP/MSP485514edhg0e7d9e6fi500001efh7fidi29hi9d0?MSPStoreType=image/gif&s=5",
+              "alt": "Number line",
+              "title": "",
+              "width": 330,
+              "height": 59,
+              "type": "1DMathPlot_1",
+              "themes": "1,2,3,4,5,6,7,8,9,10,11,12",
+              "colorinvertable": true
+            },
+            "plaintext": ""
+          }
+        ],
+        "expressiontypes": {
+          "name": "Default"
+        }
+      },
+      {
+        "title": "Percentage",
+        "scanner": "Numeric",
+        "id": "Percentage",
+        "position": 500,
+        "error": false,
+        "numsubpods": 1,
+        "subpods": [
+          {
+            "title": "",
+            "img": {
+              "src": "https://www4c.wolframalpha.com/Calculate/MSP/MSP485614edhg0e7d9e6fi500002de8fch4636c7c7c?MSPStoreType=image/gif&s=5",
+              "alt": "50%",
+              "title": "50%",
+              "width": 28,
+              "height": 19,
+              "type": "Default",
+              "themes": "1,2,3,4,5,6,7,8,9,10,11,12",
+              "colorinvertable": true
+            },
+            "plaintext": "50%"
+          }
+        ],
+        "expressiontypes": {
+          "name": "Default"
+        }
+      },
+      {
+        "title": "Pie chart",
+        "scanner": "Rational",
+        "id": "PieChart",
+        "position": 600,
+        "error": false,
+        "numsubpods": 1,
+        "subpods": [
+          {
+            "title": "",
+            "img": {
+              "src": "https://www4c.wolframalpha.com/Calculate/MSP/MSP485714edhg0e7d9e6fi500003d336g6gccgffg6i?MSPStoreType=image/gif&s=5",
+              "alt": "Pie chart",
+              "title": "",
+              "width": 60,
+              "height": 62,
+              "type": "Default",
+              "themes": "1,2,3,4,5,6,7,8,9,10,11,12",
+              "colorinvertable": true
+            },
+            "plaintext": ""
+          }
+        ],
+        "expressiontypes": {
+          "name": "Default"
+        }
+      },
+      {
+        "title": "Continued fraction",
+        "scanner": "ContinuedFraction",
+        "id": "ContinuedFraction",
+        "position": 700,
+        "error": false,
+        "numsubpods": 1,
+        "subpods": [
+          {
+            "title": "",
+            "img": {
+              "src": "https://www4c.wolframalpha.com/Calculate/MSP/MSP485814edhg0e7d9e6fi500001d7g1ciibagii80b?MSPStoreType=image/gif&s=5",
+              "alt": "[0; 2]",
+              "title": "[0; 2]",
+              "width": 548,
+              "height": 19,
+              "type": "Default",
+              "themes": "1,2,3,4,5,6,7,8,9,10,11,12",
+              "colorinvertable": true
+            },
+            "plaintext": "[0; 2]"
+          }
+        ],
+        "expressiontypes": {
+          "name": "Default"
+        },
+        "states": [
+          {
+            "name": "Fraction form",
+            "input": "ContinuedFraction__Fraction form"
+          }
+        ]
+      }
+    ],
+    "assumptions": {
+      "type": "Clash",
+      "word": "5 / 10",
+      "template": "Assuming \"${word}\" is ${desc1}. Use as ${desc2} instead",
+      "count": 2,
+      "values": [
+        {
+          "name": "FracNumber",
+          "desc": " referring to math",
+          "input": "*C.5+%2F+10-_*FracNumber-"
+        },
+        {
+          "name": "DateObject",
+          "desc": "a date",
+          "input": "*C.5+%2F+10-_*DateObject-"
+        }
+      ]
+    }
+  }
+}

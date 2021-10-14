@@ -1,0 +1,300 @@
+{
+  "queryresult": {
+    "success": true,
+    "error": false,
+    "numpods": 8,
+    "datatypes": "",
+    "timedout": "",
+    "timedoutpods": "",
+    "timing": 3.658,
+    "parsetiming": 0.427,
+    "parsetimedout": false,
+    "recalculate": "",
+    "id": "MSP444231b2g3hi9dh4e7200002c8f4f93hd7e1534",
+    "host": "https://www3.wolframalpha.com",
+    "server": "10",
+    "related": "https://www3.wolframalpha.com/api/v1/relatedQueries.jsp?id=MSPa445231b2g3hi9dh4e720000400770heb2hg9i7g9176140364258442551",
+    "version": "2.6",
+    "inputstring": "what is a url",
+    "pods": [
+      {
+        "title": "Input interpretation",
+        "scanner": "Identity",
+        "id": "Input",
+        "position": 100,
+        "error": false,
+        "numsubpods": 1,
+        "subpods": [
+          {
+            "title": "",
+            "img": {
+              "src": "https://www3.wolframalpha.com/Calculate/MSP/MSP446231b2g3hi9dh4e72000046954560094a96de?MSPStoreType=image/gif&s=10",
+              "alt": "URL (Wolfram Language symbol)",
+              "title": "URL (Wolfram Language symbol)",
+              "width": 223,
+              "height": 19,
+              "type": "Default",
+              "themes": "1,2,3,4,5,6,7,8,9,10,11,12",
+              "colorinvertable": true
+            },
+            "plaintext": "URL (Wolfram Language symbol)"
+          }
+        ],
+        "expressiontypes": {
+          "name": "Default"
+        }
+      },
+      {
+        "title": "Usage",
+        "scanner": "Data",
+        "id": "UsagePod:WolframLanguageData",
+        "position": 200,
+        "error": false,
+        "numsubpods": 1,
+        "subpods": [
+          {
+            "title": "",
+            "img": {
+              "src": "https://www3.wolframalpha.com/Calculate/MSP/MSP447231b2g3hi9dh4e7200001265a4a7ah5i8467?MSPStoreType=image/gif&s=10",
+              "alt": "URL[\"url\"] is a symbolic representation of a URL.",
+              "title": "URL[\"url\"] is a symbolic representation of a URL.",
+              "width": 321,
+              "height": 19,
+              "type": "Grid",
+              "themes": "1,2,3,4,5,6,7,8,9,10,11,12",
+              "colorinvertable": true
+            },
+            "plaintext": "URL[\"url\"] is a symbolic representation of a URL."
+          }
+        ],
+        "expressiontypes": {
+          "name": "Default"
+        },
+        "infos": {
+          "links": {
+            "url": "http://reference.wolfram.com/language/ref/URL.html",
+            "text": "More information"
+          }
+        }
+      },
+      {
+        "title": "Basic examples",
+        "scanner": "Data",
+        "id": "ExamplesPod:WolframLanguageData",
+        "position": 300,
+        "error": false,
+        "numsubpods": 1,
+        "subpods": [
+          {
+            "title": "",
+            "img": {
+              "src": "https://www3.wolframalpha.com/Calculate/MSP/MSP448231b2g3hi9dh4e720000652fe8bedb0ega50?MSPStoreType=image/gif&s=10",
+              "alt": "Basic examples",
+              "title": "",
+              "width": 413,
+              "height": 247,
+              "type": "Default",
+              "themes": "1,2,3,4,5,6,7,8,9,10,11,12",
+              "colorinvertable": true
+            },
+            "plaintext": ""
+          }
+        ],
+        "expressiontypes": {
+          "name": "Default"
+        }
+      },
+      {
+        "title": "Attributes",
+        "scanner": "Data",
+        "id": "AttributesPod:WolframLanguageData",
+        "position": 400,
+        "error": false,
+        "numsubpods": 1,
+        "subpods": [
+          {
+            "title": "",
+            "img": {
+              "src": "https://www3.wolframalpha.com/Calculate/MSP/MSP449231b2g3hi9dh4e7200002ccd5b8f44i414cd?MSPStoreType=image/gif&s=10",
+              "alt": "Protected | ReadProtected",
+              "title": "Protected | ReadProtected",
+              "width": 198,
+              "height": 19,
+              "type": "Grid",
+              "themes": "1,2,3,4,5,6,7,8,9,10,11,12",
+              "colorinvertable": true
+            },
+            "plaintext": "Protected | ReadProtected"
+          }
+        ],
+        "expressiontypes": {
+          "name": "Default"
+        }
+      },
+      {
+        "title": "Relationships with other entities",
+        "scanner": "Data",
+        "id": "RelatedEntitiesPod:WolframLanguageData",
+        "position": 500,
+        "error": false,
+        "numsubpods": 2,
+        "subpods": [
+          {
+            "title": "Related symbols",
+            "img": {
+              "src": "https://www3.wolframalpha.com/Calculate/MSP/MSP450231b2g3hi9dh4e7200005556cc653e32ddfg?MSPStoreType=image/gif&s=10",
+              "alt": "URLRead | URLExecute | URLParse | URLBuild | Hyperlink | CloudObject | File | CopyFile | RemoteFile",
+              "title": "URLRead | URLExecute | URLParse | URLBuild | Hyperlink | CloudObject | File | CopyFile | RemoteFile",
+              "width": 475,
+              "height": 40,
+              "type": "Grid",
+              "themes": "1,2,3,4,5,6,7,8,9,10,11,12",
+              "colorinvertable": true
+            },
+            "plaintext": "URLRead | URLExecute | URLParse | URLBuild | Hyperlink | CloudObject | File | CopyFile | RemoteFile"
+          },
+          {
+            "title": "",
+            "img": {
+              "src": "https://www3.wolframalpha.com/Calculate/MSP/MSP451231b2g3hi9dh4e72000031f9ac66460f5g41?MSPStoreType=image/gif&s=10",
+              "alt": "Relationships with other entities",
+              "title": "",
+              "width": 440,
+              "height": 376,
+              "type": "Default",
+              "themes": "1,2,3,4,5,6,7,8,9,10,11,12",
+              "colorinvertable": true
+            },
+            "plaintext": ""
+          }
+        ],
+        "expressiontypes": [
+          {
+            "name": "Default"
+          },
+          {
+            "name": "Default"
+          }
+        ],
+        "states": [
+          {
+            "name": "Hide relationship communities",
+            "input": "RelatedEntitiesPod:WolframLanguageData__Hide relationship communities"
+          }
+        ]
+      },
+      {
+        "title": "Typical ranks of usage in programs",
+        "scanner": "Data",
+        "id": "RanksPod:WolframLanguageData",
+        "position": 600,
+        "error": false,
+        "numsubpods": 2,
+        "subpods": [
+          {
+            "title": "Frequency of usage in all corpuses",
+            "img": {
+              "src": "https://www3.wolframalpha.com/Calculate/MSP/MSP452231b2g3hi9dh4e720000643g1a5fc13b7ec5?MSPStoreType=image/gif&s=10",
+              "alt": "1727th most common (1 in 362000 symbols)",
+              "title": "1727th most common (1 in 362000 symbols)",
+              "width": 271,
+              "height": 22,
+              "type": "Default",
+              "themes": "1,2,3,4,5,6,7,8,9,10,11,12",
+              "colorinvertable": true
+            },
+            "plaintext": "1727th most common (1 in 362000 symbols)"
+          },
+          {
+            "title": "Rank of usage in the Wolfram documentation",
+            "img": {
+              "src": "https://www3.wolframalpha.com/Calculate/MSP/MSP453231b2g3hi9dh4e7200000g58105h71d404ig?MSPStoreType=image/gif&s=10",
+              "alt": "898th most common (1 in 16500 symbols)",
+              "title": "898th most common (1 in 16500 symbols)",
+              "width": 256,
+              "height": 22,
+              "type": "Default",
+              "themes": "1,2,3,4,5,6,7,8,9,10,11,12",
+              "colorinvertable": true
+            },
+            "plaintext": "898th most common (1 in 16500 symbols)"
+          }
+        ],
+        "expressiontypes": [
+          {
+            "name": "Default"
+          },
+          {
+            "name": "Default"
+          }
+        ],
+        "states": [
+          {
+            "name": "Show more ranks",
+            "input": "RanksPod:WolframLanguageData__Show more ranks"
+          }
+        ]
+      },
+      {
+        "title": "History",
+        "scanner": "Data",
+        "id": "HistoryPod:WolframLanguageData",
+        "position": 700,
+        "error": false,
+        "numsubpods": 1,
+        "subpods": [
+          {
+            "title": "Version introduced or modified",
+            "img": {
+              "src": "https://www3.wolframalpha.com/Calculate/MSP/MSP454231b2g3hi9dh4e72000020hb6gd0ga7g319c?MSPStoreType=image/gif&s=10",
+              "alt": "introduced in Version 11 (August 2016)\nlast modified in Version 12 (April 2019)",
+              "title": "introduced in Version 11 (August 2016)\nlast modified in Version 12 (April 2019)",
+              "width": 260,
+              "height": 46,
+              "type": "Grid",
+              "themes": "1,2,3,4,5,6,7,8,9,10,11,12",
+              "colorinvertable": true
+            },
+            "plaintext": "introduced in Version 11 (August 2016)\nlast modified in Version 12 (April 2019)"
+          }
+        ],
+        "expressiontypes": {
+          "name": "Grid"
+        }
+      },
+      {
+        "title": "Timeline",
+        "scanner": "Data",
+        "id": "TimelinePod:WolframLanguageData",
+        "position": 800,
+        "error": false,
+        "numsubpods": 1,
+        "subpods": [
+          {
+            "title": "",
+            "img": {
+              "src": "https://www3.wolframalpha.com/Calculate/MSP/MSP455231b2g3hi9dh4e7200002i8ha7aei9ce325g?MSPStoreType=image/gif&s=10",
+              "alt": "Timeline",
+              "title": "",
+              "width": 550,
+              "height": 38,
+              "type": "Default",
+              "themes": "1,2,3,4,5,6,7,8,9,10,11,12",
+              "colorinvertable": true
+            },
+            "plaintext": ""
+          }
+        ],
+        "expressiontypes": {
+          "name": "Default"
+        },
+        "states": [
+          {
+            "name": "Show release numbers",
+            "input": "TimelinePod:WolframLanguageData__Show release numbers"
+          }
+        ]
+      }
+    ]
+  }
+}
