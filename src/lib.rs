@@ -51,14 +51,6 @@ impl Bot {
             config.settings.wa_api_key = v
         };
 
-        match std::env::var("CATINATOR_WA_API_KEY") {
-            Ok(var) => {
-                info!("using wa api key from env var");
-                config.settings.wa_api_key = var
-            }
-            Err(_) => (),
-        }
-
         let irc_client = Client::from_config(config.clone().into()).await?;
 
         Ok(Bot { irc_client, config })
