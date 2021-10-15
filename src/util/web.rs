@@ -1,32 +1,43 @@
 use anyhow::{Context, Error, Result};
+use async_trait::async_trait;
 use reqwest::{get, Url};
 use urlparse::quote_plus as urlparse_quote_plus;
+
+#[async_trait]
+pub(crate) trait UrlShortener {
+    fn new() -> Self;
+    async fn shorten(&self, url: &str) -> Result<String, Error>;
+}
+
+pub(crate) struct IsgdUrlShortener {}
+
+#[async_trait]
+impl UrlShortener for IsgdUrlShortener {
+    fn new() -> Self {
+        Self {}
+    }
+
+    async fn shorten(&self, url: &str) -> Result<String, Error> {
+        Ok(get(Url::parse(&format!(
+            "https://is.gd/create.php?format=simple&url={}",
+            url
+        ))
+        .context("Failed to parse url")?)
+        .await
+        .context("Failed to make request")?
+        .text()
+        .await
+        .context("failed to get request response text")?)
+    }
+}
 
 pub(crate) fn quote_plus(text: &str) -> Result<String, Error> {
     Ok(urlparse_quote_plus(text, b"")?)
 }
 
-// TODO: Either catinator should have a URL shortening utility module,
-// or we should start our own service
-pub(crate) async fn shorten_url(url: &str) -> Result<String, Error> {
-    // This just uses the first service gonzobot uses too
-    let short_url = get(Url::parse(&format!(
-        "https://is.gd/create.php?format=simple&url={}",
-        url
-    ))
-    .context("Failed to parse url")?)
-    .await
-    .context("Failed to make request")?
-    .text()
-    .await
-    .context("failed to get request response text")?;
-
-    Ok(short_url)
-}
-
 #[cfg(test)]
 mod tests {
-    use super::{quote_plus};
+    use super::quote_plus;
     use anyhow::{Error, Result};
 
     #[test]

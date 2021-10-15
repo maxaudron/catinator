@@ -1,6 +1,6 @@
 use crate::util::{
     formatting::truncate,
-    web::{quote_plus, shorten_url},
+    web::{quote_plus, IsgdUrlShortener, UrlShortener},
 };
 use anyhow::{bail, Context, Error, Result};
 use futures::try_join;
@@ -99,8 +99,7 @@ async fn get_wa_user_short_url(input: &str) -> Result<String, Error> {
         // Maybe only with is.gd though.
         quote_plus(&quote_plus(input)?)?
     );
-
-    shorten_url(&user_url).await
+    IsgdUrlShortener::new().shorten(&user_url).await
 }
 
 /// Sends a request to the Wolfram Alpha API, returns a plain text response.
@@ -183,7 +182,7 @@ mod tests {
         Ok(())
     }
 
-    // These tests must be updated if a service other than is.gd is used
+    // These tests must be updated if UrlShortener other than IsgdUrlShortener is used
     #[tokio::test]
     async fn test_wa_user_short_url_1() -> Result<(), Error> {
         let input = "5/10";
