@@ -64,12 +64,16 @@ fn to_single_string(wa_res: WaResponse) -> String {
         .join(" - ")
 }
 
-fn get_url(query_str: &str, api_key: Option<&str>, base_url: Option<&str>) -> Result<Url, Error> {
+fn get_wa_api_url(
+    query_str: &str,
+    api_key: Option<&str>,
+    base_url: Option<&str>,
+) -> Result<Url, Error> {
     let wa_url = "http://api.wolframalpha.com";
     let api_url = format!(
         "{}/v2/query?input={}&appid={}&output=json",
         base_url.unwrap_or(wa_url),
-        query_str,
+        quote_plus(query_str)?,
         api_key.unwrap_or("XXX"), // Allow tests to run without a key
     );
     Url::parse(&api_url).context("Failed to parse URL")
@@ -110,7 +114,7 @@ async fn wa_query(
     base_url: Option<&str>,
 ) -> Result<String, Error> {
     let user_url_shortened_fut = get_wa_user_short_url(query_str);
-    let url = get_url(query_str, api_key, base_url)?;
+    let url = get_wa_api_url(query_str, api_key, base_url)?;
     let wa_res_fut = handle_wa_req(&url);
 
     let futs = join!(wa_res_fut, user_url_shortened_fut);
