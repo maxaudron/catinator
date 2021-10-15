@@ -3,7 +3,7 @@ use crate::util::{
     web::{quote_plus, IsgdUrlShortener, UrlShortener},
 };
 use anyhow::{bail, Context, Error, Result};
-use futures::try_join;
+use futures::join;
 use irc::client::prelude::*;
 use macros::privmsg;
 use reqwest::{get, Url};
@@ -113,12 +113,17 @@ async fn wa_query(
     let url = get_url(query_str, api_key, base_url)?;
     let wa_res_fut = handle_wa_req(&url);
 
-    // Can't just (foo.await, bar.await), smh
-    // https://rust-lang.github.io/async-book/06_multiple_futures/02_join.html
-    let (wa_res, user_url_shortened) = try_join!(wa_res_fut, user_url_shortened_fut)?;
+    let futs = join!(wa_res_fut, user_url_shortened_fut);
+    let wa_res = match futs.0 {
+        Ok(x) => x,
+        // Return early if there are no results at all
+        _ => return Ok("No results.".to_string()),
+    };
+    let user_url_shortened = futs.1?;
 
     let string_result = match to_single_string(wa_res) {
-        x if x.is_empty() => "No primary results.".to_string(),
+        // Return with user link, but no plaintext results
+        x if x.is_empty() => "No plaintext results.".to_string(),
         x => x,
     };
 
@@ -279,7 +284,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_query_with_result_with_primary_pods_parsing() -> Result<(), Error> {
+    async fn test_query_with_result_with_no_primary_pods_parsing() -> Result<(), Error> {
         let body =
             include_str!("../../tests/resources/wolfram_alpha_api_response_with_no_primaries.json");
         let _m = mockito::mock("GET", Matcher::Any)
@@ -290,7 +295,21 @@ mod tests {
 
         let res = wa_query("what is a url", None, Some(&mockito::server_url())).await?;
         let res_without_link = res.rsplitn(2, "-").collect::<Vec<&str>>()[1..].join(" ");
-        assert_eq!(res_without_link.trim(), "No primary results.");
+        assert_eq!(res_without_link.trim(), "No plaintext results.");
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_query_with_result_with_wrong_json_parsing() -> Result<(), Error> {
+        let body = include_str!("../../tests/resources/wolfram_alpha_api_response_wrong_json.json");
+        let _m = mockito::mock("GET", Matcher::Any)
+            // Trimmed down version of a full WA response:
+            .with_body(body)
+            .create();
+        mockito::start();
+
+        let res = wa_query("what is a url", None, Some(&mockito::server_url())).await?;
+        assert_eq!(res, "No results.");
         Ok(())
     }
 }
