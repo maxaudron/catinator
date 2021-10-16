@@ -1,4 +1,4 @@
-use anyhow::{Context, Result, anyhow, bail};
+use anyhow::{anyhow, bail, Context, Result};
 use irc::client::prelude::*;
 
 use sedregex::ReplaceCommand;

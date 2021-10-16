@@ -24,7 +24,8 @@ impl Parse for Items {
         let mut items: Vec<Item> = Vec::new();
 
         while !input.is_empty() {
-            if input.peek(syn::Ident) && input.peek2(syn::token::Paren) || input.peek(Token![async]) {
+            if input.peek(syn::Ident) && input.peek2(syn::token::Paren) || input.peek(Token![async])
+            {
                 items.push(input.parse()?)
             } else {
                 return Err(input.error("line was not of expected format"));

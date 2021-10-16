@@ -1,4 +1,7 @@
-use syn::{Expr, Token, parse::{Parse, ParseStream}};
+use syn::{
+    parse::{Parse, ParseStream},
+    Expr, Token,
+};
 
 pub struct Item {
     pub msg: Expr,

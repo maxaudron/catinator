@@ -32,7 +32,11 @@ impl Bot {
 
         let irc_client = Client::from_config(config.clone().into()).await?;
 
-        let bot = Bot { irc_client, config, figment };
+        let bot = Bot {
+            irc_client,
+            config,
+            figment,
+        };
 
         if bot.config.server.sasl && bot.config.user.password.is_some() {
             tracing::info!("initializing sasl");
