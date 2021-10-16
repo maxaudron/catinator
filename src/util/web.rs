@@ -4,12 +4,12 @@ use reqwest::{get, Url};
 use urlparse::quote_plus as urlparse_quote_plus;
 
 #[async_trait]
-pub(crate) trait UrlShortener {
+pub trait UrlShortener {
     fn new() -> Self;
     async fn shorten(&self, url: &str) -> Result<String, Error>;
 }
 
-pub(crate) struct IsgdUrlShortener {}
+pub struct IsgdUrlShortener {}
 
 #[async_trait]
 impl UrlShortener for IsgdUrlShortener {
@@ -31,7 +31,7 @@ impl UrlShortener for IsgdUrlShortener {
     }
 }
 
-pub(crate) fn quote_plus(text: &str) -> Result<String, Error> {
+pub fn quote_plus(text: &str) -> Result<String, Error> {
     Ok(urlparse_quote_plus(text, b"")?)
 }
 

@@ -1,7 +1,7 @@
 /// Truncates a string after a certain number of characters.
 /// Function always tries to truncate on a word boundary.
 /// Reimplemented from gonzobot.
-pub(crate) fn truncate(text: &str, len: usize) -> String {
+pub fn truncate(text: &str, len: usize) -> String {
     if text.len() <= len {
         return text.to_string();
     }
