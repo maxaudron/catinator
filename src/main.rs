@@ -9,6 +9,8 @@ async fn main() {
         .with_thread_ids(true)
         .init();
 
+    let mut bot = Bot::new().await.unwrap();
+
     let mut sed = catinator::hooks::sed::Sed::new();
 
     catinator![

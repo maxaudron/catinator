@@ -175,15 +175,6 @@ pub fn catinator(tokens: TokenStream) -> TokenStream {
         use irc::client::prelude::*;
         use catinator::Bot;
 
-        let config_path = env::var("CATINATOR_CONFIG").unwrap_or("config.toml".to_string());
-        info!("starting bot with config file {}", config_path);
-        let mut bot = Bot::new(&config_path).await.unwrap();
-
-        if bot.config.server.sasl {
-            info!("initializing sasl");
-            bot.sasl_init().await.unwrap()
-        }
-
         #(#matchers_regex)*
 
         info!("starting main event loop");

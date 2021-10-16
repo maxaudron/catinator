@@ -42,16 +42,23 @@ impl Bot {
 
         let config_str = fs::read_to_string(config_path)?;
         let mut config: config::Config = toml::from_str(&config_str)?;
+        let bot = Bot { irc_client, config, figment };
 
         if let Some(v) = get_env_var("CATINATOR_PASSWORD") {
             config.user.password = v
         };
+        if bot.config.server.sasl && bot.config.user.password.is_some() {
+            tracing::info!("initializing sasl");
+            bot.sasl_init().await.unwrap()
+        }
 
         if let Some(v) = get_env_var("CATINATOR_WA_API_KEY") {
             config.settings.wa_api_key = v
         };
 
         let irc_client = Client::from_config(config.clone().into()).await?;
+        Ok(bot)
+    }
 
         Ok(Bot { irc_client, config })
     }
