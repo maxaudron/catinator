@@ -2,11 +2,9 @@
 #[cfg(all(test, feature = "bench"))]
 extern crate test;
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 
 use irc::client::prelude::*;
-
-use tracing::info;
 
 pub mod config;
 pub mod hooks;
@@ -23,44 +21,29 @@ macro_rules! reply {
 
 pub struct Bot {
     pub config: config::Config,
+    pub figment: figment::Figment,
     pub irc_client: irc::client::Client,
 }
 
-fn get_env_var(var_name: &str) -> Option<String> {
-    match std::env::var(var_name) {
-        Ok(var) => {
-            info!("using {} from env", var_name);
-            Some(var)
-        }
-        Err(_) => None,
-    }
-}
-
 impl Bot {
-    pub async fn new(config_path: &str) -> Result<Bot> {
-        use std::fs;
+    pub async fn new() -> Result<Bot> {
+        let figment = config::Config::figment();
+        let config: config::Config = figment.extract().context("failed to extract config")?;
 
-        let config_str = fs::read_to_string(config_path)?;
-        let mut config: config::Config = toml::from_str(&config_str)?;
+        let irc_client = Client::from_config(config.clone().into()).await?;
+
         let bot = Bot { irc_client, config, figment };
 
-        if let Some(v) = get_env_var("CATINATOR_PASSWORD") {
-            config.user.password = v
-        };
         if bot.config.server.sasl && bot.config.user.password.is_some() {
             tracing::info!("initializing sasl");
             bot.sasl_init().await.unwrap()
         }
 
-        if let Some(v) = get_env_var("CATINATOR_WA_API_KEY") {
-            config.settings.wa_api_key = v
-        };
-
-        let irc_client = Client::from_config(config.clone().into()).await?;
         Ok(bot)
     }
 
-        Ok(Bot { irc_client, config })
+    pub fn figment(&self) -> &figment::Figment {
+        &self.figment
     }
 
     pub async fn sasl_init(&self) -> Result<()> {

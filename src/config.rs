@@ -1,6 +1,12 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default, Deserialize)]
+use figment::{
+    providers::{Format, Toml},
+    value::{Dict, Map},
+    Error, Figment, Metadata, Profile, Provider,
+};
+
+#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Deserialize, Serialize)]
 pub struct Config {
     pub user: User,
     pub server: Server,
@@ -13,7 +19,7 @@ impl From<Config> for irc::client::prelude::Config {
             nickname: Some(input.user.nickname),
             username: Some(input.user.username),
             realname: Some(input.user.realname),
-            nick_password: Some(input.user.password),
+            nick_password: input.user.password,
             server: Some(input.server.hostname),
             port: Some(input.server.port),
             use_tls: Some(input.server.tls),
@@ -23,25 +29,83 @@ impl From<Config> for irc::client::prelude::Config {
     }
 }
 
-#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default, Deserialize)]
+#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Deserialize, Serialize)]
 pub struct User {
     pub nickname: String,
     pub username: String,
-    pub password: String,
+    #[serde(default)]
+    pub password: Option<String>,
     pub realname: String,
 }
 
-#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default, Deserialize)]
+#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Deserialize, Serialize)]
 pub struct Server {
     pub hostname: String,
+    #[serde(default = "default_port")]
     pub port: u16,
+    #[serde(default = "default_tls")]
     pub tls: bool,
+    #[serde(default)]
     pub sasl: bool,
+    #[serde(default)]
     pub channels: Vec<String>,
 }
 
-#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default, Deserialize)]
+const fn default_port() -> u16 {
+    6697
+}
+
+const fn default_tls() -> bool {
+    true
+}
+
+#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Deserialize, Serialize)]
 pub struct Settings {
+    #[serde(default = "default_prefix")]
     pub prefix: char,
-    pub wa_api_key: String,
+    // pub wa_api_key: String,
+}
+
+const fn default_prefix() -> char {
+    ':'
+}
+
+impl Config {
+    // Allow the configuration to be extracted from any `Provider`.
+    pub fn from<T: Provider>(provider: T) -> Result<Config, Error> {
+        Figment::from(provider).extract()
+    }
+
+    // Provide a default provider, a `Figment`.
+    pub fn figment() -> Figment {
+        use figment::providers::Env;
+
+        let figment = Figment::new();
+
+        #[cfg(debug_assertions)]
+        const PROFILE: &str = "debug";
+        #[cfg(not(debug_assertions))]
+        const PROFILE: &str = "release";
+
+        figment
+            .merge(Toml::file("config.toml").nested())
+            .merge(Toml::file("config.debug.toml").nested())
+            .merge(Env::prefixed("CATINATOR_").split('_'))
+            .select(PROFILE)
+    }
+}
+
+// Make `Config` a provider itself for composability.
+impl Provider for Config {
+    fn metadata(&self) -> Metadata {
+        Metadata::named("Library Config")
+    }
+
+    fn data(&self) -> Result<Map<Profile, Dict>, Error> {
+        figment::providers::Serialized::defaults(self).data()
+    }
+
+    fn profile(&self) -> Option<Profile> {
+        Some(Profile::Default)
+    }
 }

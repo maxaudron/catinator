@@ -1,16 +1,19 @@
-[user]
-nickname = "\\__{^-_-^}"
+[default]
+[default.user]
 username = "catinator"
-password = ""
 realname = "moaw"
 
-[server]
+[default.server]
 hostname = "irc.snoonet.org"
 port = 6697
 tls = true
 sasl = true
-channels = ["#redoxmasterrace", "#linuxmasterrace", "#gnulag"]
 
-[settings]
+[default.settings]
 prefix = ':'
-wa_api_key = ""
+
+[release]
+[release.user]
+nickname = "\\__{^-_-^}"
+[release.server]
+channels = ["#redoxmasterrace", "#linuxmasterrace", "#gnulag"]

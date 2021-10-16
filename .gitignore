@@ -1,4 +1,4 @@
 /target
 /.cache/
-config.json
 /deploy/vendor
+/config.debug.toml

@@ -3,11 +3,38 @@ use crate::util::{
     web::{quote_plus, IsgdUrlShortener, UrlShortener},
 };
 use anyhow::{bail, Context, Error, Result};
+use figment::providers::Env;
 use futures::join;
 use irc::client::prelude::*;
 use macros::privmsg;
 use reqwest::{get, Url};
 use serde::{Deserialize, Serialize};
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct WolframAlpha {
+    wa_api_key: String,
+}
+
+impl WolframAlpha {
+    pub fn new(bot: &crate::Bot) -> Result<WolframAlpha> {
+        bot.figment
+            .clone()
+            .merge(Env::prefixed("CATINATOR_"))
+            .extract()
+            .context("failed to extract wolfram alpha config")
+    }
+
+    pub async fn wa(&self, bot: &crate::Bot, msg: Message) -> Result<()> {
+        privmsg!(msg, {
+            let content = get_input_query(text)?;
+            bot.send_privmsg(
+                msg.response_target()
+                    .context("failed to get response target")?,
+                &wa_query(&content, Some(&self.wa_api_key), None).await?,
+            )?;
+        })
+    }
+}
 
 #[derive(Serialize, Deserialize, Debug)]
 struct WaResponse {
@@ -145,17 +172,6 @@ fn get_input_query(text: &str) -> Result<String, Error> {
     }
     let content = input[1].trim();
     Ok(content.to_string())
-}
-
-pub async fn wa(bot: &crate::Bot, msg: Message) -> Result<()> {
-    privmsg!(msg, {
-        let content = get_input_query(text)?;
-        bot.send_privmsg(
-            msg.response_target()
-                .context("failed to get response target")?,
-            &wa_query(&content, Some(&bot.config.settings.wa_api_key), None).await?,
-        )?;
-    })
 }
 
 #[cfg(test)]

@@ -36,7 +36,7 @@ pub fn sasl(bot: &crate::Bot, msg: Message) -> Result<()> {
             if text == "+" {
                 let creds = Credentials::default()
                     .with_username(bot.config.clone().user.username)
-                    .with_password(bot.config.clone().user.password);
+                    .with_password(bot.config.clone().user.password.unwrap());
 
                 let mut mechanism = Plain::from_credentials(creds)?;
 

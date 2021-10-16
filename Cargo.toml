@@ -12,14 +12,15 @@ irc-proto = "0.15"
 sasl = "0.5"
 base64 = "0.13"
 
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
+figment = { version = "0.10", features = ["env", "toml"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
 toml = "0.5"
 
 anyhow = "1"
 
 futures = "0.3"
-tokio = { version = "1.5.0", features = ["full", "rt-multi-thread"] }
+tokio = { version = "1", features = ["full", "rt-multi-thread"] }
 
 tracing = "0.1"
 tracing-subscriber = "0.2"

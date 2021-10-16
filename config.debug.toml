@@ -1,0 +1,5 @@
+[debug]
+[debug.user]
+nickname = "kittynator"
+[debug.server]
+channels = ["#audron-test"]

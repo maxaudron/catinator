@@ -12,6 +12,8 @@ async fn main() {
     let mut bot = Bot::new().await.unwrap();
 
     let mut sed = catinator::hooks::sed::Sed::new();
+    let wolfram_alpha = catinator::hooks::wolfram_alpha::WolframAlpha::new(&bot)
+        .expect("failed to initialize WolframAlpha command");
 
     catinator![
         hook(
@@ -57,7 +59,7 @@ async fn main() {
         async command(
             "wa",
             "Returns Wolfram Alpha results for a query",
-            catinator::hooks::wolfram_alpha::wa
+            wolfram_alpha.wa
         ),
     ];
 }
