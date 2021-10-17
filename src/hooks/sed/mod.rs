@@ -1,9 +1,10 @@
 use anyhow::{anyhow, bail, Context, Result};
 use irc::client::prelude::*;
 
-use sedregex::ReplaceCommand;
-
 use std::collections::HashMap;
+
+#[allow(dead_code)]
+mod parser;
 
 static LOG_MAX_SIZE: usize = 10000;
 
@@ -59,10 +60,8 @@ impl Sed {
 
     fn find_and_replace(&mut self, msg: &Message) -> Result<String> {
         if let Command::PRIVMSG(target, text) = msg.command.clone() {
-            let cmd = match ReplaceCommand::new(text.as_str()) {
-                Ok(cmd) => cmd,
-                Err(_) => return Err(anyhow!("building replace command failed")),
-            };
+            let cmd =
+                parser::Command::from_str(text.as_str()).context("failed to parse sed command")?;
 
             let log = self
                 .0
@@ -72,13 +71,13 @@ impl Sed {
             return log
                 .iter()
                 .rev()
-                .find(|(_, text)| cmd.expr.is_match(text) && !RE.with(|re| re.is_match(text)))
+                .find(|(_, text)| cmd.regex().is_match(text) && !RE.with(|re| re.is_match(text)))
                 .and_then(|(nick, text)| {
                     if text.starts_with("\x01\x01") {
                         Some(format!(
                             "* {}{}",
                             nick,
-                            cmd.execute(text.replace("\x01", ""))
+                            cmd.execute(&text.replace("\x01", ""))
                         ))
                     } else {
                         Some(format!("<{}> {}", nick, cmd.execute(text)))
@@ -203,7 +202,7 @@ mod tests {
                 command: Command::PRIVMSG("user".to_string(), "s/will be/has been/".to_string(),),
             })
             .unwrap(),
-            "<user> this is a long message which has been replaced"
+            "<user> this is a long message which \x02has been\x02 replaced"
         )
     }
 
@@ -217,7 +216,7 @@ mod tests {
                 command: Command::PRIVMSG("user".to_string(), "s/(will).*(be)/$2 $1/".to_string(),),
             })
             .unwrap(),
-            "<user> this is a long message which be will replaced"
+            "<user> this is a long message which \x02be will\x02 replaced"
         )
     }
 }

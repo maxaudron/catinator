@@ -138,6 +138,7 @@ dependencies = [
  "anyhow",
  "async-trait",
  "base64",
+ "bitflags",
  "catinator_macros",
  "figment",
  "futures",
@@ -148,9 +149,9 @@ dependencies = [
  "regex",
  "reqwest",
  "sasl",
- "sedregex",
  "serde",
  "serde_json",
+ "thiserror",
  "tokio",
  "toml",
  "tracing",
@@ -1170,14 +1171,6 @@ checksum = "b362b83898e0e69f38515b82ee15aa80636befe47c3b6d3d89a911e78fc228ce"
 dependencies = [
  "ring",
  "untrusted",
-]
-
-[[package]]
-name = "sedregex"
-version = "0.2.4"
-source = "git+https://gitlab.com/audron/sedregex#2ac3be5f56f53122cd89a160bc2ff9f7387a9467"
-dependencies = [
- "regex",
 ]
 
 [[package]]
