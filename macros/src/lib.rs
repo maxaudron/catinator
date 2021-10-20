@@ -91,6 +91,14 @@ fn generate_help(items: &Items) -> proc_macro2::TokenStream {
 /// }
 /// ```
 ///
+/// ## async
+/// You can run async functions natively by prepending your function
+/// hooks etc. with the async keyword.
+///
+/// ```ignore
+/// async hook("name", "description", COMMAND, function)
+/// ```
+///
 /// ## hook
 /// Hooks execute a function when a specific IRC Command is received,
 /// this allows for great flexibility in hooking into IRC for Authentication and the likes.
