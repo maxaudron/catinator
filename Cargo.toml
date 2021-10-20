@@ -1,11 +1,10 @@
 [package]
 name = "catinator"
-version = "1.6.1"
+version = "1.6.2"
 authors = ["Max Audron <audron@cocaine.farm>"]
 edition = "2018"
 
 license = "ISC"
-license-file = "LICENSE"
 description = "High Level IRC Bot library and instance"
 homepage = "https://gitlab.com/cocainefarm/gnulag/catinator"
 repository = "https://gitlab.com/cocainefarm/gnulag/catinator"
