@@ -5,6 +5,7 @@ use figment::{
     value::{Dict, Map},
     Error, Figment, Metadata, Profile, Provider,
 };
+use tracing::debug;
 
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Deserialize, Serialize)]
 pub struct Config {
@@ -80,18 +81,32 @@ impl Config {
     pub fn figment() -> Figment {
         use figment::providers::Env;
 
-        let figment = Figment::new();
+        let mut figment = Figment::new();
 
         #[cfg(debug_assertions)]
         const PROFILE: &str = "debug";
         #[cfg(not(debug_assertions))]
         const PROFILE: &str = "release";
 
-        figment
-            .merge(Toml::file("config.toml").nested())
-            .merge(Toml::file("config.debug.toml").nested())
-            .merge(Env::prefixed("CATINATOR_").split('_'))
-            .select(PROFILE)
+        let config_file = if let Ok(path) = std::env::var("CATINATOR_CONFIG") {
+            path
+        } else {
+            "config.toml".to_string()
+        };
+
+        debug!("using config file: {}", config_file);
+
+        figment = figment
+            .merge(Toml::file(config_file).nested())
+            .merge(Env::prefixed("CATINATOR_").split('_'));
+
+        #[cfg(debug_assertions)]
+        {
+            debug!("sourcing debug config");
+            figment = figment.merge(Toml::file("config.debug.toml").nested());
+        }
+
+        figment.select(PROFILE)
     }
 }
 
