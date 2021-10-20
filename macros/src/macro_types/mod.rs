@@ -105,7 +105,7 @@ impl IrcItem for Command {
                 let result = #call;
 
                 if let Err(err) = result {
-                    tracing::error!("error in matcher: {:?}: {:?}", #name, err)
+                    tracing::warn!("error in matcher: {:?}: {:?}", #name, err)
                 }
             }
         }
@@ -173,7 +173,7 @@ impl IrcItem for Hook {
                 let result = #call;
 
                 if let Err(err) = result {
-                    tracing::error!("error in matcher: {:?}: {:?}", #name, err)
+                    tracing::warn!("error in matcher: {:?}: {:?}", #name, err)
                 }
             }
         }
@@ -270,7 +270,7 @@ impl IrcItem for Matcher {
                 let result = #call;
 
                 if let Err(err) = result {
-                    tracing::error!("error in matcher: {:?}: {:?}", #name, err)
+                    tracing::warn!("error in matcher: {:?}: {:?}", #name, err)
                 }
             }
         }
