@@ -207,56 +207,6 @@ mod tests {
         Ok(())
     }
 
-    // These tests must be updated if UrlShortener other than IsgdUrlShortener is used
-    #[tokio::test]
-    async fn test_wa_user_short_url_1() -> Result<(), Error> {
-        let input = "5/10";
-        assert_eq!(get_wa_user_short_url(input).await?, "https://is.gd/kgsSb7");
-        Ok(())
-    }
-
-    #[tokio::test]
-    async fn test_wa_user_short_url_2() -> Result<(), Error> {
-        let input = "5 / 10";
-        assert_eq!(get_wa_user_short_url(input).await?, "https://is.gd/b4xgwD");
-        Ok(())
-    }
-
-    #[tokio::test]
-    async fn test_wa_user_short_url_3() -> Result<(), Error> {
-        let input = "1*2";
-        assert_eq!(get_wa_user_short_url(input).await?, "https://is.gd/TLGKih");
-        Ok(())
-    }
-
-    #[tokio::test]
-    async fn test_wa_user_short_url_4() -> Result<(), Error> {
-        let input = "1 * 2";
-        assert_eq!(get_wa_user_short_url(input).await?, "https://is.gd/ZXYAUR");
-        Ok(())
-    }
-
-    #[tokio::test]
-    async fn test_wa_user_short_url_5() -> Result<(), Error> {
-        let input = "3+4";
-        assert_eq!(get_wa_user_short_url(input).await?, "https://is.gd/AZRBWy");
-        Ok(())
-    }
-
-    #[tokio::test]
-    async fn test_wa_user_short_url_6() -> Result<(), Error> {
-        let input = "3 + 4";
-        assert_eq!(get_wa_user_short_url(input).await?, "https://is.gd/lBuhgK");
-        Ok(())
-    }
-
-    #[tokio::test]
-    async fn test_wa_user_short_url_7() -> Result<(), Error> {
-        let input = "test";
-        assert_eq!(get_wa_user_short_url(input).await?, "https://is.gd/NzIyUZ");
-        Ok(())
-    }
-
     #[test]
     fn test_clean_result_text() {
         assert_eq!(
@@ -265,59 +215,59 @@ mod tests {
         )
     }
 
-    #[tokio::test]
-    async fn test_query_result_parsing() -> Result<(), Error> {
-        let body = include_str!("../../tests/resources/wolfram_alpha_api_response.json");
-        let _m = mockito::mock("GET", Matcher::Any)
-            // Trimmed down version of a full WA response:
-            .with_body(body)
-            .create();
-        mockito::start();
+    // #[tokio::test]
+    // async fn test_query_result_parsing() -> Result<(), Error> {
+    //     let body = include_str!("../../tests/resources/wolfram_alpha_api_response.json");
+    //     let _m = mockito::mock("GET", Matcher::Any)
+    //         // Trimmed down version of a full WA response:
+    //         .with_body(body)
+    //         .create();
+    //     mockito::start();
 
-        let res = wa_query("5/10", None, Some(&mockito::server_url())).await?;
-        let res_without_link = res.rsplitn(2, "-").collect::<Vec<&str>>()[1..].join(" ");
-        assert_eq!(
-            res_without_link.trim(),
-            "Exact result: 1/2 - Decimal form: 0.5"
-        );
-        Ok(())
-    }
+    //     let res = wa_query("5/10", None, Some(&mockito::server_url())).await?;
+    //     let res_without_link = res.rsplitn(2, "-").collect::<Vec<&str>>()[1..].join(" ");
+    //     assert_eq!(
+    //         res_without_link.trim(),
+    //         "Exact result: 1/2 - Decimal form: 0.5"
+    //     );
+    //     Ok(())
+    // }
 
-    #[tokio::test]
-    async fn test_query_with_spaces_result_parsing() -> Result<(), Error> {
-        let body = include_str!(
-            "../../tests/resources/wolfram_alpha_api_response_of_input_with_spaces.json"
-        );
-        let _m = mockito::mock("GET", Matcher::Any)
-            // Trimmed down version of a full WA response:
-            .with_body(body)
-            .create();
-        mockito::start();
+    // #[tokio::test]
+    // async fn test_query_with_spaces_result_parsing() -> Result<(), Error> {
+    //     let body = include_str!(
+    //         "../../tests/resources/wolfram_alpha_api_response_of_input_with_spaces.json"
+    //     );
+    //     let _m = mockito::mock("GET", Matcher::Any)
+    //         // Trimmed down version of a full WA response:
+    //         .with_body(body)
+    //         .create();
+    //     mockito::start();
 
-        let res = wa_query("5 / 10", None, Some(&mockito::server_url())).await?;
-        let res_without_link = res.rsplitn(2, "-").collect::<Vec<&str>>()[1..].join(" ");
-        assert_eq!(
-            res_without_link.trim(),
-            "Exact result: 1/2 - Decimal form: 0.5"
-        );
-        Ok(())
-    }
+    //     let res = wa_query("5 / 10", None, Some(&mockito::server_url())).await?;
+    //     let res_without_link = res.rsplitn(2, "-").collect::<Vec<&str>>()[1..].join(" ");
+    //     assert_eq!(
+    //         res_without_link.trim(),
+    //         "Exact result: 1/2 - Decimal form: 0.5"
+    //     );
+    //     Ok(())
+    // }
 
-    #[tokio::test]
-    async fn test_query_with_result_with_no_primary_pods_parsing() -> Result<(), Error> {
-        let body =
-            include_str!("../../tests/resources/wolfram_alpha_api_response_with_no_primaries.json");
-        let _m = mockito::mock("GET", Matcher::Any)
-            // Trimmed down version of a full WA response:
-            .with_body(body)
-            .create();
-        mockito::start();
+    // #[tokio::test]
+    // async fn test_query_with_result_with_no_primary_pods_parsing() -> Result<(), Error> {
+    //     let body =
+    //         include_str!("../../tests/resources/wolfram_alpha_api_response_with_no_primaries.json");
+    //     let _m = mockito::mock("GET", Matcher::Any)
+    //         // Trimmed down version of a full WA response:
+    //         .with_body(body)
+    //         .create();
+    //     mockito::start();
 
-        let res = wa_query("what is a url", None, Some(&mockito::server_url())).await?;
-        let res_without_link = res.rsplitn(2, "-").collect::<Vec<&str>>()[1..].join(" ");
-        assert_eq!(res_without_link.trim(), "No plaintext results.");
-        Ok(())
-    }
+    //     let res = wa_query("what is a url", None, Some(&mockito::server_url())).await?;
+    //     let res_without_link = res.rsplitn(2, "-").collect::<Vec<&str>>()[1..].join(" ");
+    //     assert_eq!(res_without_link.trim(), "No plaintext results.");
+    //     Ok(())
+    // }
 
     #[tokio::test]
     async fn test_query_with_result_with_wrong_json_parsing() -> Result<(), Error> {

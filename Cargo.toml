@@ -1,6 +1,6 @@
 [package]
 name = "catinator"
-version = "1.6.2"
+version = "1.6.3"
 authors = ["Max Audron <audron@cocaine.farm>"]
 edition = "2018"
 
