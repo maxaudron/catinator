@@ -4,6 +4,17 @@ version = "1.6.1"
 authors = ["Max Audron <audron@cocaine.farm>"]
 edition = "2018"
 
+license = "ISC"
+license-file = "LICENSE"
+description = "High Level IRC Bot library and instance"
+homepage = "https://gitlab.com/cocainefarm/gnulag/catinator"
+repository = "https://gitlab.com/cocainefarm/gnulag/catinator"
+documentation = "https://docs.rs/catinator"
+readme = "README.md"
+keywords = ["irc", "bot", "async"]
+
+exclude = ["deploy", ".cache"]
+
 [dependencies]
 macros = { package = "catinator_macros", version = "0", path = "./macros" }
 

@@ -1,10 +1,10 @@
 #[tokio::main]
 async fn main() {
-    use catinator::catinator;
+    use catinator::{catinator};
 
     tracing_subscriber::fmt::init();
 
-    let mut bot = Bot::new().await.unwrap();
+    let mut bot = catinator::Bot::new().await.unwrap();
 
     let mut sed = catinator::hooks::sed::Sed::new();
     let wolfram_alpha = catinator::hooks::wolfram_alpha::WolframAlpha::new(&bot)
