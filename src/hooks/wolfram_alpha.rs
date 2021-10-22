@@ -1,7 +1,7 @@
-use crate::util::{
-    formatting::truncate,
-    web::{quote_plus, IsgdUrlShortener, UrlShortener},
-};
+//! ask wolfram alpha a query
+
+use crate::util::{quote_plus, truncate};
+// use crate::util::{url_shorteners::Isgd, UrlShortener};
 use anyhow::{bail, Context, Error, Result};
 use figment::providers::Env;
 use futures::join;

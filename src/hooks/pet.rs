@@ -1,5 +1,3 @@
-use std::str;
-
 use anyhow::{Context, Result};
 use irc::client::prelude::*;
 use macros::privmsg;
@@ -15,14 +13,9 @@ const PET_RESPONSE: [&str; 5] = [
     "strikes you with it's sharp claws",
 ];
 
-/// Pet cat
+/// Pet the cat, get rekt
 ///
 /// Sends some random action when petted.
-///
-/// # See also
-///
-/// - [`Bot::send_action`]
-/// - RESPONSE
 pub fn pet(bot: &crate::Bot, msg: Message) -> Result<()> {
     privmsg!(msg, {
         bot.send_action(

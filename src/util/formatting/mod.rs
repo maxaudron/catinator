@@ -1,9 +1,31 @@
+//! Tools for formatting irc messages
+
 mod truncate;
 mod color;
 
 pub use truncate::*;
 pub use color::*;
 
+/// Turn strings bold, italic,underline, strikethrough, and monospace.
+///
+/// The Formatting trait is implemented on `String` and `&str` for your convenience
+///
+/// # Format a string
+/// ```
+/// use catinator::util::Formatting;
+///
+/// let text = "this should be bold";
+/// assert_eq!("\x02this should be bold\x02", text.bold())
+/// ```
+///
+/// # Use raw formatting code
+/// ```
+/// use catinator::util::Formatting;
+///
+/// let text = "this should be bold";
+/// let result = format!("{}{}", String::BOLD, text);
+/// assert_eq!("\x02this should be bold", result)
+/// ```
 pub trait Formatting<'r> {
     const BOLD: &'r str = "\x02";
     const ITALIC: &'r str = "\x1D";
@@ -12,11 +34,11 @@ pub trait Formatting<'r> {
     const MONOSPACE: &'r str = "\x11";
     const COLOR: &'r str = "\x03";
 
-    fn bold(self) -> Self;
-    fn italic(self) -> Self;
-    fn underline(self) -> Self;
-    fn strikethrough(self) -> Self;
-    fn monospace(self) -> Self;
+    fn bold(self) -> String;
+    fn italic(self) -> String;
+    fn underline(self) -> String;
+    fn strikethrough(self) -> String;
+    fn monospace(self) -> String;
     // fn color(self, color: Color) -> Self;
 }
 
@@ -63,6 +85,31 @@ impl<'r> Formatting<'r> for String {
 
     //     return self;
     // }
+}
+
+impl<'r> Formatting<'r> for &str {
+    fn bold(self) -> String {
+        format!("{}{}{}", Self::BOLD, self, Self::BOLD)
+    }
+
+    fn italic(self) -> String {
+        format!("{}{}{}", Self::ITALIC, self, Self::ITALIC)
+    }
+
+    fn underline(self) -> String {
+        format!("{}{}{}", Self::UNDERLINE, self, Self::UNDERLINE)
+    }
+
+    fn strikethrough(self) -> String {
+        format!("{}{}{}", Self::STRIKETHROUGH, self, Self::STRIKETHROUGH)
+    }
+
+    fn monospace(self) -> String {
+        format!("{}{}{}", Self::MONOSPACE, self, Self::MONOSPACE)
+    }
+
+    // TODO implement color codes
+    // fn color(mut self, foreground: Option<Color>, background: Option<Color>) -> Self { }
 }
 
 #[cfg(all(test, feature = "bench"))]

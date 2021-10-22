@@ -2,6 +2,7 @@ use anyhow::{Context, Result};
 use irc::client::prelude::*;
 use macros::privmsg;
 
+/// \[Turn things up to eleven\]. Intensifies things written in brackets.
 pub fn intensify(bot: &crate::Bot, msg: Message) -> Result<()> {
     privmsg!(msg, {
         let mut chars = text.chars();

@@ -1,4 +1,5 @@
 /// Truncates a string after a certain number of characters.
+///
 /// Function always tries to truncate on a word boundary.
 /// Reimplemented from gonzobot.
 pub fn truncate(text: &str, len: usize) -> String {

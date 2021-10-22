@@ -1,3 +1,22 @@
+//! sed for irc. replace text in past messages
+//!
+//! Perform sed replaces on single messages in the buffers history, up to 10k messages old.
+//!
+//! ```text
+//! <+basso> crystalmett: welcome back
+//! <%audron> s/wel/whale/
+//! <\__{^-_-^}> <basso> crystalmett: whalecome back
+//! ```
+//!
+//! # Supported flags
+//! ```text
+//! g     global: match every occurrence of the regex in a line
+//! i     case-insensitive: letters match both upper and lower case
+//! s     allow . to match \n
+//! U     swap the meaning of x* and x*?
+//! x     ignore whitespace and allow line comments (starting with `#`)
+//! ```
+
 use anyhow::{anyhow, bail, Context, Result};
 use irc::client::prelude::*;
 

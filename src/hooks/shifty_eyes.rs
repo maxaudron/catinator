@@ -4,6 +4,7 @@ use irc::client::prelude::*;
 const EYES: [char; 11] = ['^', 'v', 'V', '>', '<', 'x', 'X', '-', 'o', 'O', '.'];
 const NOSE: [char; 7] = ['.', '_', '-', ';', '\'', '"', '~'];
 
+/// you are being watched <.<
 pub fn shifty_eyes(bot: &crate::Bot, msg: Message) -> Result<()> {
     if let Command::PRIVMSG(_, text) = msg.command.clone() {
         if text.len() == 3 {
@@ -41,6 +42,7 @@ fn invert(input: char) -> Result<char> {
         '>' => Ok('<'),
         '<' => Ok('>'),
         'x' => Ok('o'),
+        '.' => Ok('o'),
         'X' => Ok('O'),
         '-' => Ok('o'),
         'o' => Ok('-'),

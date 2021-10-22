@@ -1,36 +1,18 @@
-use anyhow::{Context, Error, Result};
+use anyhow::{Error, Result};
 use async_trait::async_trait;
-use reqwest::{get, Url};
 use urlparse::quote_plus as urlparse_quote_plus;
 
+pub mod url_shorteners;
+
+/// Shorten urls
 #[async_trait]
 pub trait UrlShortener {
-    fn new() -> Self;
-    async fn shorten(&self, url: &str) -> Result<String, Error>;
+    /// Call this method with the url you want shortened.
+    /// Returns the shortened url.
+    async fn shorten(url: &str) -> Result<String, Error>;
 }
 
-pub struct IsgdUrlShortener {}
-
-#[async_trait]
-impl UrlShortener for IsgdUrlShortener {
-    fn new() -> Self {
-        Self {}
-    }
-
-    async fn shorten(&self, url: &str) -> Result<String, Error> {
-        Ok(get(Url::parse(&format!(
-            "https://is.gd/create.php?format=simple&url={}",
-            url
-        ))
-        .context("Failed to parse url")?)
-        .await
-        .context("Failed to make request")?
-        .text()
-        .await
-        .context("failed to get request response text")?)
-    }
-}
-
+/// quote strings to be URL save
 pub fn quote_plus(text: &str) -> Result<String, Error> {
     Ok(urlparse_quote_plus(text, b"")?)
 }

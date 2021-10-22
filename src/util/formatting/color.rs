@@ -1,3 +1,4 @@
+/// The basic 16 IRC color codes
 pub enum Color {
     White = 00,
     Black = 01,

@@ -44,7 +44,7 @@ async fn main() {
         command(
             "pet",
             "Pet the cat, cats generally like pets.",
-            catinator::hooks::pet::pet
+            catinator::hooks::pet
         ),
         command(
             "about",

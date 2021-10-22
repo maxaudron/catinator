@@ -3,7 +3,7 @@ use std::{borrow::Cow, str::Chars};
 use bitflags::bitflags;
 use regex::Regex;
 
-use crate::util::formatting::Formatting;
+use crate::util::Formatting;
 
 type Commands = Vec<Command>;
 

@@ -1,17 +1,22 @@
-extern crate rand;
+//! The bots hooks, commands and matchers. For explanation of different types see [crate::catinator]
+//!
+//! # Implementing hooks
 
 use anyhow::Result;
 use irc::client::prelude::*;
 
-pub mod intensify;
-pub mod pet;
+mod intensify;
+mod pet;
+mod shifty_eyes;
+
+pub use intensify::*;
+pub use pet::*;
+pub use shifty_eyes::*;
+
 pub mod sed;
-pub mod shifty_eyes;
 pub mod wolfram_alpha;
 
-pub use intensify::intensify;
-pub use shifty_eyes::shifty_eyes;
-
+/// Replies with some information about the bot
 pub fn about(bot: &crate::Bot, msg: Message) -> Result<()> {
     bot.send_privmsg(
         msg.response_target().unwrap(),
@@ -26,6 +31,7 @@ pub fn about(bot: &crate::Bot, msg: Message) -> Result<()> {
     Ok(())
 }
 
+/// Listen to AUTHENTICATE messages and perform SASL authentication
 pub fn sasl(bot: &crate::Bot, msg: Message) -> Result<()> {
     match msg.command {
         Command::AUTHENTICATE(text) => {
