@@ -130,7 +130,8 @@ async fn get_wa_user_short_url(input: &str) -> Result<String, Error> {
         // Maybe only with is.gd though.
         quote_plus(&quote_plus(input)?)?
     );
-    IsgdUrlShortener::new().shorten(&user_url).await
+    // Isgd::shorten(&user_url).await
+    Ok(user_url)
 }
 
 /// Sends a request to the Wolfram Alpha API, returns a plain text response.
