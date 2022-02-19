@@ -1,8 +1,8 @@
 local k = import 'ksonnet-util/kausal.libsonnet';
 local util = import 'util/main.libsonnet';
 
-function(tag, namespace, envSlug=null, projectPathSlug=null)
-  (util.inlineSpec('https://control.kube.cat:6443', namespace, envSlug, projectPathSlug))
+function(tag, namespace, apiserver='https://kube.vapor.systems:6443', envSlug=null, projectPathSlug=null)
+  (util.inlineSpec(apiserver, namespace, envSlug, projectPathSlug))
   + {
     _config:: self.data._config,
     catinator:: self.data.catinator,
@@ -23,7 +23,7 @@ function(tag, namespace, envSlug=null, projectPathSlug=null)
         statefulset+:
           statefulset.spec.template.spec.withInitContainers([
             container.new('wait-for-egress', 'docker.io/busybox:latest')
-            + container.withCommand(['/bin/sleep', '30']),
+            + container.withCommand(['/bin/sleep', '10']),
           ]),
       },
     },
