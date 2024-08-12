@@ -1,9 +1,9 @@
 ---
 include:
-  - project: "cocainefarm/templates/ci"
-    file: "/rust.yaml"
-  - project: "cocainefarm/templates/ci"
-    file: "/tanka.base.yaml"
+  #  - project: "cocainefarm/templates/ci"
+  #    file: "/rust.yaml"
+  #  - project: "cocainefarm/templates/ci"
+  #    file: "/tanka.base.yaml"
 
 variables:
   RUST_RELEASE: "true"
