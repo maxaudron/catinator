@@ -1,8 +1,11 @@
 #[tokio::main]
 async fn main() {
-    use catinator::{catinator};
+    use catinator::catinator;
 
     tracing_subscriber::fmt::init();
+
+    rustls::crypto::CryptoProvider::install_default(rustls::crypto::aws_lc_rs::default_provider())
+        .unwrap();
 
     let mut bot = catinator::Bot::new().await.unwrap();
 
