@@ -13,16 +13,18 @@ documentation = "https://docs.rs/catinator_macros"
 proc-macro = true
 
 [dependencies]
-syn = { version = "1", features = ["parsing"] }
+syn = { version = "2", features = ["full"] }
 proc-macro2 = "1"
 quote = "1"
 
 [dev-dependencies]
 tokio = "1"
 futures = "0"
-irc = { version = "0.15", features = ["json", "tls-rust"], default_features = false }
+irc = { version = "1", features = [
+    "json",
+    "tls-rust",
+], default-features = false }
 tracing = "0"
 anyhow = "1"
 regex = "1"
 catinator = { path = "../" }
-

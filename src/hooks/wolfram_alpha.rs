@@ -180,7 +180,7 @@ mod tests {
 
     use crate::hooks::wolfram_alpha::clean_result_text;
 
-    use super::{get_input_query, get_wa_user_short_url, wa_query};
+    use super::{get_input_query, wa_query};
     use anyhow::{Error, Result};
     use mockito::{self, Matcher};
 
@@ -273,13 +273,17 @@ mod tests {
     #[tokio::test]
     async fn test_query_with_result_with_wrong_json_parsing() -> Result<(), Error> {
         let body = include_str!("../../tests/resources/wolfram_alpha_api_response_wrong_json.json");
-        let _m = mockito::mock("GET", Matcher::Any)
+
+        let mut server = mockito::Server::new_async().await;
+
+        let _m = server
+            .mock("GET", Matcher::Any)
             // Trimmed down version of a full WA response:
             .with_body(body)
-            .create();
-        mockito::start();
+            .create_async()
+            .await;
 
-        let res = wa_query("what is a url", None, Some(&mockito::server_url())).await?;
+        let res = wa_query("what is a url", None, Some(&server.url())).await?;
         assert_eq!(res, "No results.");
         Ok(())
     }

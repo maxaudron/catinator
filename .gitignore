@@ -2,3 +2,4 @@
 /.cache/
 /deploy/vendor
 /config.debug.toml
+/.direnv

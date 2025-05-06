@@ -334,7 +334,7 @@ impl Parse for Function {
         if input.peek2(Token![::]) {
             Ok(Function::Path(input.parse()?))
         } else if input.peek2(Token![.]) {
-            Ok(Function::Expr(input.parse_terminated(Ident::parse)?))
+            Ok(Function::Expr(input.parse_terminated(Ident::parse, Token![.])?))
         } else {
             Err(input.error("did not find path or dotted"))
         }

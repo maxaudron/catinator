@@ -3,6 +3,7 @@
 //! # Implementing hooks
 
 use anyhow::Result;
+use base64::{alphabet, engine, Engine};
 use irc::client::prelude::*;
 
 mod intensify;
@@ -31,6 +32,9 @@ pub fn about(bot: &crate::Bot, msg: Message) -> Result<()> {
     Ok(())
 }
 
+const ENGINE: engine::GeneralPurpose =
+    engine::GeneralPurpose::new(&alphabet::URL_SAFE, engine::general_purpose::NO_PAD);
+
 /// Listen to AUTHENTICATE messages and perform SASL authentication
 pub fn sasl(bot: &crate::Bot, msg: Message) -> Result<()> {
     match msg.command {
@@ -48,7 +52,7 @@ pub fn sasl(bot: &crate::Bot, msg: Message) -> Result<()> {
 
                 let initial_data = mechanism.initial();
 
-                bot.irc_client.send_sasl(base64::encode(initial_data))?;
+                bot.irc_client.send_sasl(ENGINE.encode(initial_data))?;
                 bot.irc_client.send(Command::CAP(
                     None,
                     irc_proto::command::CapSubCommand::END,

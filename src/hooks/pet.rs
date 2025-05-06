@@ -2,8 +2,7 @@ use anyhow::{Context, Result};
 use irc::client::prelude::*;
 use macros::privmsg;
 
-use rand::seq::SliceRandom;
-use rand::thread_rng;
+use rand::{prelude::IndexedRandom, rng};
 
 const PET_RESPONSE: [&str; 5] = [
     "purrs",
@@ -22,7 +21,7 @@ pub fn pet(bot: &crate::Bot, msg: Message) -> Result<()> {
             msg.response_target()
                 .context("failed to get response target")?,
             PET_RESPONSE
-                .choose(&mut thread_rng())
+                .choose(&mut rng())
                 .context("failed choosing a pet response")?,
         )?;
     })

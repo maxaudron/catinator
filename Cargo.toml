@@ -17,38 +17,45 @@ exclude = ["deploy", ".cache"]
 [dependencies]
 macros = { package = "catinator_macros", version = "0", path = "./macros" }
 
-irc = { version = "0.15", features = ["json", "tls-rust", "ctcp"], default_features = false }
-irc-proto = "0.15"
+irc = { version = "1", features = [
+    "json",
+    "tls-rust",
+    "ctcp",
+], default-features = false }
+irc-proto = "1"
 sasl = "0.5"
-base64 = "0.13"
+base64 = "0.22"
 
 figment = { version = "0.10", features = ["env", "toml"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-toml = "0.5"
+toml = "0.8"
 
 anyhow = "1"
-thiserror = "1"
+thiserror = "2"
 
 futures = "0.3"
 tokio = { version = "1", features = ["full", "rt-multi-thread"] }
 
 tracing = "0.1"
-tracing-subscriber = "0.2"
+tracing-subscriber = "0.3"
 tracing-futures = "0.2"
 
 regex = "1"
 
-rand = "0.8.3"
+rand = "0.9"
 
-reqwest = { version = "0.11", default-features = false, features = ["rustls-tls", "gzip"] }
+reqwest = { version = "0.12", default-features = false, features = [
+    "rustls-tls",
+    "gzip",
+] }
 urlparse = "0.7"
 async-trait = "0.1"
 
-bitflags = "1"
+bitflags = "2"
 
 [dev-dependencies]
-mockito = "0.30.0"
+mockito = "1"
 
 [features]
 default = []

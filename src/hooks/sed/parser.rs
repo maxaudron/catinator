@@ -121,6 +121,7 @@ bitflags! {
     /// s     allow . to match \n
     /// U     swap the meaning of x* and x*?
     /// x     ignore whitespace and allow line comments (starting with `#`)
+    #[derive(Debug, Clone, PartialEq, PartialOrd)]
     struct Flags: u32 {
         const GLOBAL           = 0b00000001;
         const CASE_INSENSITIVE = 0b00000010;
