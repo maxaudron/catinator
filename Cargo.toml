@@ -54,6 +54,8 @@ async-trait = "0.1"
 
 bitflags = "2"
 
+unicode-segmentation = "1"
+
 [dev-dependencies]
 mockito = "1"
 
