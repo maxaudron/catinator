@@ -1,7 +1,7 @@
 use anyhow::{bail, Context, Result};
 use irc::client::prelude::*;
 
-const EYES: [char; 11] = ['^', 'v', 'V', '>', '<', 'x', 'X', '-', 'o', 'O', '.'];
+const EYES: [char; 7] = ['^', 'v', 'V', '>', '<', 'x', 'X'];
 const NOSE: [char; 7] = ['.', '_', '-', ';', '\'', '"', '~'];
 
 /// you are being watched <.<
