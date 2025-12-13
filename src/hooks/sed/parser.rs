@@ -98,7 +98,7 @@ impl Command {
         Ok(output)
     }
 
-    pub fn execute(self, target: &str) -> Cow<str> {
+    pub fn execute(self, target: &str) -> Cow<'_, str> {
         let result: Cow<str>;
 
         if self.flags.contains(Flags::GLOBAL) {
