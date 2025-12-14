@@ -2,7 +2,10 @@
 async fn main() {
     use catinator::catinator;
 
-    tracing_subscriber::fmt::init();
+    tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::TRACE)
+        // .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
+        .init();
 
     rustls::crypto::CryptoProvider::install_default(rustls::crypto::aws_lc_rs::default_provider())
         .unwrap();

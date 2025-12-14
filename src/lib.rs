@@ -74,7 +74,11 @@ impl Bot {
 
         if bot.config.server.sasl && bot.config.user.password.is_some() {
             tracing::info!("initializing sasl");
-            bot.sasl_init().await.unwrap()
+            bot.sasl_init().unwrap()
+        } else if let Some(password) = bot.config.server.password.as_ref() {
+            tracing::info!("sending server password");
+            bot.irc_client.send(Command::PASS(password.clone()))?;
+            bot.register_connection()?;
         }
 
         Ok(bot)
@@ -86,18 +90,24 @@ impl Bot {
         &self.figment
     }
 
-    /// Initialize a sasl connection, you usually don't need
-    /// to run this yourself as it is done during [Bot::new].
-    pub async fn sasl_init(&self) -> Result<()> {
-        self.irc_client
-            .send_cap_req(&vec![irc::client::prelude::Capability::Sasl])?;
+    pub fn register_connection(&self) -> Result<()> {
         self.irc_client
             .send(Command::NICK(self.config.user.nickname.clone()))?;
         self.irc_client.send(Command::USER(
-            self.config.user.nickname.clone(),
+            self.config.user.username.clone(),
             "0".to_owned(),
             self.config.user.realname.clone(),
         ))?;
+
+        Ok(())
+    }
+
+    /// Initialize a sasl connection, you usually don't need
+    /// to run this yourself as it is done during [Bot::new].
+    pub fn sasl_init(&self) -> Result<()> {
+        self.irc_client
+            .send_cap_req(&[irc::client::prelude::Capability::Sasl])?;
+        self.register_connection()?;
         self.irc_client.send_sasl_plain()?;
 
         Ok(())
