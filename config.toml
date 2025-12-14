@@ -1,13 +1,14 @@
 [default]
 [default.user]
-username = "catinator"
+nickname = "\\__{^-_-^}"
+username = "catinator/irc.snoonet.org"
 realname = "moaw"
 
 [default.server]
-hostname = "irc.snoonet.org"
-port = 6697
-tls = true
-sasl = true
+hostname = "10.10.0.1"
+port = 6667
+tls = false
+sasl = false
 
 [default.settings]
 prefix = ':'
