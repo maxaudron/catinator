@@ -1,6 +1,6 @@
-![git mirror](https://img.shields.io/badge/git-repo-cba6f7?logo=git&link=https%3A%2F%2Fgit.vapor.systems%2Fcatinator.git)
-![github mirror](https://img.shields.io/badge/github-repo-blue?logo=github&link=https%3A%2F%2Fgithub.com%2Fmaxaudron%2Fcatinator)
-![gitlab mirror](https://img.shields.io/badge/gitlab-repo-orange?logo=github&link=https%3A%2F%2Fgitlab.com%2Fcocainefarm%2Fcatinator)
+[![git mirror](https://img.shields.io/badge/git-repo-cba6f7?logo=git&link=https%3A%2F%2Fgit.vapor.systems%2Fcatinator.git)](https://git.vapor.systems/catinator.git)
+[![github mirror](https://img.shields.io/badge/github-repo-blue?logo=github&link=https%3A%2F%2Fgithub.com%2Fmaxaudron%2Fcatinator)](https://github.com/maxaudron/catinator)
+[![gitlab mirror](https://img.shields.io/badge/gitlab-repo-orange?logo=github&link=https%3A%2F%2Fgitlab.com%2Fcocainefarm%2Fcatinator)](https://gitlab.com/cocainefarm/catinator)
 
 # catinator
 
