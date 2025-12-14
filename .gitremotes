@@ -1,0 +1,9 @@
+[remote "origin"]
+  url = git@vapor.systems:catinator.git
+  fetch = +refs/heads/*:refs/remotes/origin/*
+[remote "github"]
+  url = git@github.com:maxaudron/catinator.git
+  fetch = +refs/heads/*:refs/remotes/origin/*
+[remote "gitlab"]
+  url = git@gitlab.com:cocainefarm/catinator.git
+  fetch = +refs/heads/*:refs/remotes/origin/*

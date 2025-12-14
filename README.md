@@ -1,6 +1,10 @@
+![git mirror](https://img.shields.io/badge/git-repo-cba6f7?logo=git&link=https%3A%2F%2Fgit.vapor.systems%2Fcatinator.git)
+![github mirror](https://img.shields.io/badge/github-repo-blue?logo=github&link=https%3A%2F%2Fgithub.com%2Fmaxaudron%2Fcatinator)
+![gitlab mirror](https://img.shields.io/badge/gitlab-repo-orange?logo=github&link=https%3A%2F%2Fgitlab.com%2Fcocainefarm%2Fcatinator)
+
 # catinator
 
-catinator is an irc bot made by and for the `#gnulag` channel on snoonet. It
+catinator is an irc bot made by and for the `#linuxmasterrace` channel on snoonet. It
 also tries to be usable as a general purpose higher level IRC bot making
 library, based on the [irc crate](https://docs.rs/irc).
 
