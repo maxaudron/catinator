@@ -123,6 +123,7 @@ impl From<Config> for irc::client::prelude::Config {
             username: Some(input.user.username),
             realname: Some(input.user.realname),
             nick_password: input.user.password,
+            password: input.server.password,
             server: Some(input.server.hostname),
             port: Some(input.server.port),
             use_tls: Some(input.server.tls),
@@ -139,7 +140,7 @@ pub struct User {
     pub nickname: String,
     /// The username used for authentication
     pub username: String,
-    /// The password used for authentication
+    /// The password used for authentication with nickserv
     /// Defaults to None
     #[serde(default)]
     pub password: Option<String>,
@@ -161,6 +162,10 @@ pub struct Server {
     /// Enable or disable sasl authentication (default: false)
     #[serde(default)]
     pub sasl: bool,
+    /// The password for the server
+    /// Defaults to None
+    #[serde(default)]
+    pub password: Option<String>,
     /// Channels to join (default: [])
     #[serde(default)]
     pub channels: Vec<String>,
