@@ -3,3 +3,4 @@
 /deploy/vendor
 /config.debug.toml
 /.direnv
+/result
