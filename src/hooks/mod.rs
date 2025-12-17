@@ -7,10 +7,12 @@ use base64::{alphabet, engine, Engine};
 use irc::client::prelude::*;
 
 mod intensify;
+mod nitter;
 mod pet;
 mod shifty_eyes;
 
 pub use intensify::*;
+pub use nitter::*;
 pub use pet::*;
 pub use shifty_eyes::*;
 

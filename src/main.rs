@@ -4,7 +4,7 @@ async fn main() {
 
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::TRACE)
-        // .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
+        .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
         .init();
 
     rustls::crypto::CryptoProvider::install_default(rustls::crypto::aws_lc_rs::default_provider())
@@ -17,17 +17,23 @@ async fn main() {
         .expect("failed to initialize WolframAlpha command");
 
     catinator![
-        hook(
-            "sasl",
-            "Handle Authentication.",
-            AUTHENTICATE,
-            catinator::hooks::sasl
-        ),
+        // hook(
+        //     "sasl",
+        //     "Handle Authentication.",
+        //     AUTHENTICATE,
+        //     catinator::hooks::sasl
+        // ),
         hook(
             "sed_log",
             "Log messages for use with sed replace, max 10k lines.",
             PRIVMSG,
             sed.log
+        ),
+        matcher(
+            "nitter",
+            "replace twitter urls with a nitter instance (xcancel.com)",
+            r"https:\/\/(twitter|x)\.com\/",
+            catinator::hooks::nitter
         ),
         matcher(
             "shifty_eyes",
