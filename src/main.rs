@@ -68,5 +68,10 @@ async fn main() {
             "Returns Wolfram Alpha results for a query",
             wolfram_alpha.wa
         ),
+        async command(
+            "hal",
+            "Returns Wolfram Alpha results in natural language",
+            wolfram_alpha.hal
+        ),
     ];
 }

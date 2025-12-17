@@ -34,6 +34,17 @@ impl WolframAlpha {
             )?;
         })
     }
+
+    pub async fn hal(&self, bot: &crate::Bot, msg: Message) -> Result<()> {
+        privmsg!(msg, {
+            let content = get_input_query(text)?;
+            bot.send_privmsg(
+                msg.response_target()
+                    .context("failed to get response target")?,
+                &hal_query(&content, Some(&self.wa_api_key), None).await?,
+            )?;
+        })
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -95,10 +106,17 @@ fn get_wa_api_url(
     query_str: &str,
     api_key: Option<&str>,
     base_url: Option<&str>,
+    spoken: bool,
 ) -> Result<Url, Error> {
     let wa_url = "http://api.wolframalpha.com";
+    let (endpoint, options) = if spoken {
+        ("v1/spoken", "")
+    } else {
+        ("v2/query", "&output=json")
+    };
+
     let api_url = format!(
-        "{}/v2/query?input={}&appid={}&output=json",
+        "{}/{endpoint}?input={}&appid={}{options}",
         base_url.unwrap_or(wa_url),
         quote_plus(query_str)?,
         api_key.unwrap_or("XXX"), // Allow tests to run without a key
@@ -134,6 +152,15 @@ async fn get_wa_user_short_url(input: &str) -> Result<String, Error> {
     Ok(user_url)
 }
 
+async fn hal_query(
+    query_str: &str,
+    api_key: Option<&str>,
+    base_url: Option<&str>,
+) -> Result<String, Error> {
+    let url = get_wa_api_url(query_str, api_key, base_url, true)?;
+    Ok(send_wa_req(&url).await.unwrap_or("No Result".to_string()))
+}
+
 /// Sends a request to the Wolfram Alpha API, returns a plain text response.
 #[tracing::instrument]
 async fn wa_query(
@@ -142,7 +169,7 @@ async fn wa_query(
     base_url: Option<&str>,
 ) -> Result<String, Error> {
     let user_url_shortened_fut = get_wa_user_short_url(query_str);
-    let url = get_wa_api_url(query_str, api_key, base_url)?;
+    let url = get_wa_api_url(query_str, api_key, base_url, false)?;
     let wa_res_fut = handle_wa_req(&url);
 
     let futs = join!(wa_res_fut, user_url_shortened_fut);
